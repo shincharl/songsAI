@@ -1,0 +1,68 @@
+.header {
+  width: 100%;
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  height: 40px;
+  cursor: pointer;
+}
+
+.nav {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+/* 기본 탭 */
+.tab {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  color: #444;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: #111;
+}
+
+/* 활성 탭 */
+.activeTab {
+  font-weight: 600;
+  color: #000;
+}
+
+.authButton {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: white;
+}
+
+.authButton:hover {
+  background: #f3f4f6;
+}
+
+/* 회원가입 강조 버튼 */
+.signup {
+  background: #111827;
+  color: white;
+  border: none;
+}
+
+.signup:hover {
+  background: #444;
+}

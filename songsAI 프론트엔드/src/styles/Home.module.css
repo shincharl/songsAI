@@ -1,0 +1,41 @@
+.container {
+  min-height: calc(100vh - 64px); /* 헤더 높이 제외 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f9fafb, #eef2f7);
+  text-align: center;
+  padding: 0 20px;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.description {
+  font-size: 18px;
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+/* CTA 버튼 */
+.button {
+  padding: 12px 28px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  background-color: #1f2937;
+  transform: translateY(-2px);
+}

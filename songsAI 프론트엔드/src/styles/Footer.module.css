@@ -1,0 +1,58 @@
+.footer {
+  margin-top: 80px;
+  border-top: 1px solid #e5e7eb;
+  background: #fafafa;
+  color: #555;
+  font-size: 14px;
+}
+
+.inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px 20px 15px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 메뉴 한 줄 */
+.menu {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #444;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.menu a:hover {
+  color: black;
+}
+
+/* hover 밑줄 애니메이션 */
+.menu a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0%;
+  height: 1px;
+  background: black;
+  transition: width 0.25s ease;
+}
+
+.menu a:hover::after {
+  width: 100%;
+}
+
+.bottom {
+  font-size: 13px;
+  color: #888;
+}
