@@ -1,0 +1,54 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+}
+
+.loginBox {
+    width: 400px;
+    padding: 2.5rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.title {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.loginBtn {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: none;
+    background: black;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.loginBtn:hover {
+    background: #333;
+}
+
+.signupText {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.signupLink {
+    color: black;
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.signupLink:hover {
+    text-decoration: underline;
+}

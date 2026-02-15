@@ -1,0 +1,158 @@
+/* 화면 정중앙 */
+.wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 7%;
+}
+
+/* 로고 */
+.logo {
+    width: 8%;
+    height: 4%;
+    margin-bottom: 50px;
+}
+
+/* 카드 */
+.box {
+    position: relative;
+    width: 500px;
+    height: 500px;        
+    padding: 50px 40px;
+    border: 2px solid #ddd;
+    border-radius: 16px;
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.buttonArea {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+/* 카드 오른쪽 위 */
+.topRight {
+    position: absolute;
+    right: 0;
+    top: 28%;
+    right: 10%; 
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.qr {
+    display: flex;
+    align-items: center;
+    gap: 6px;       /* 아이콘과 글자 간격 */
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+}
+
+.qrIcon {
+    font-size: 14px;
+}
+
+.helpIcon {
+    cursor: pointer;
+    color: #888;
+}
+
+.helpWrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* 툴팁 */
+.tooltip {
+    position: absolute;
+    bottom: 180%;
+    right: 0;
+    background: #222;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+/* 화살표 */
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    right: 10px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #222 transparent;
+}
+
+/* hover 시 표시 */
+.helpWrapper:hover .tooltip {
+    opacity: 1;
+    transform: translateY(5px);
+}
+
+/* 버튼 */
+.kakaoBtn,
+.defaultBtn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.kakaoBtn {
+    background: #fee500;
+}
+
+.defaultBtn {
+    background: #222;
+    color: white;
+}
+
+.signupArea {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #777;
+    text-align: center;
+}
+
+.signupLink {
+    margin-left: 6px;
+    color: black;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.signupLink:hover {
+    text-decoration: underline;
+}
+
+.footerInfo {
+    margin-top: 40px;
+    text-align: center;
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.footerInfo p {
+    margin: 2px 0;
+}

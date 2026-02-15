@@ -1,13 +1,15 @@
 .header {
   width: 100%;
-  border-bottom: 1px solid #e5e7eb;
-  background: white;
+  background-color: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0.5rem 1rem;
+  position: relative;
+  z-index: 50;
 }
 
 .inner {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,54 +17,77 @@
 
 .logo {
   height: 40px;
-  cursor: pointer;
 }
 
 .nav {
   display: flex;
-  gap: 18px;
   align-items: center;
 }
 
-/* 기본 탭 */
 .tab {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
   background: none;
   border: none;
-  font-size: 15px;
   cursor: pointer;
-  color: #444;
-  padding: 6px 8px;
-  transition: all 0.2s ease;
+  font-weight: 500;
+  border-radius: 4px;
 }
 
-.tab:hover {
-  color: #111;
-}
-
-/* 활성 탭 */
 .activeTab {
-  font-weight: 600;
-  color: #000;
+  background-color: #f0f0f0;
 }
 
 .authButton {
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 8px 14px;
-  background: white;
+  font-weight: bold;
+  color: aquamarine;
 }
 
-.authButton:hover {
-  background: #f3f4f6;
+.authWrapper {
+  position: relative;
 }
 
-/* 회원가입 강조 버튼 */
-.signup {
-  background: #111827;
-  color: white;
+.dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 120px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdownItem {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  background: none;
   border: none;
+  cursor: pointer;
 }
 
-.signup:hover {
-  background: #444;
+.dropdownItem:hover {
+  background-color: #f0f0f0;
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0 0.5rem;
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  padding: 0.3rem 0.5rem;
+  width: 150px;
+}
+
+.searchIcon {
+  color: #888;
+  cursor: pointer;
 }

@@ -1,0 +1,113 @@
+/* 화면 정중앙 */
+.wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 로고 */
+.logo {
+    width: 8%;
+    height: 4%;
+    margin-bottom: 50px;
+}
+
+/* 카드 */
+.box {
+    width: 500px;
+    height: 500px;
+    padding: 50px 40px;
+    border: 2px solid #ddd;
+    border-radius: 16px;
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+}
+
+/* 제목 */
+.title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* 입력창 */
+.input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #222;
+}
+
+/* 체크박스 줄 */
+.optionRow {
+    font-size: 14px;
+    color: #666;
+}
+
+.optionRow input {
+    margin-right: 6px;
+}
+
+/* 로그인 버튼 */
+.loginBtn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    background: #222;
+    color: white;
+}
+
+/* 아래 메뉴 */
+.bottomMenu {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #777;
+}
+
+.bottomMenu button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+}
+
+.bottomMenu button:hover {
+    text-decoration: underline;
+}
+
+.signupLink {
+    font-weight: 600;
+    color: black;
+}
+
+/* 아래 안내 */
+.footerInfo {
+    margin-top: 40px;
+    text-align: center;
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.footerInfo p {
+    margin: 2px 0;
+}

@@ -1,0 +1,103 @@
+.banner h1,
+.banner h2,
+.banner p {
+  margin-top: 0;
+}
+
+.banner {
+  width: 50%;
+  margin: 0;           /* 위/아래 여백 제거 */
+  padding: 4rem 2rem;
+  height: 350px;       /* 원하면 조정 */
+  text-align: left;
+  box-sizing: border-box;
+  margin-top: 2%;
+  margin-left: 5%;
+
+  /* 배경 이미지 */
+  background-image: 
+    linear-gradient(to right, #fff 0%, rgba(255,255,255,0) 70%),
+    url('../assets/banner_bg.jpg');
+  
+  background-size: cover; /* 배너 전체 채우기 */
+  background-position: center; /* 이미지 중앙 맞춤 */
+  background-repeat: no-repeat; /* 반복 방지*/
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 수직 가운데 정렬 */
+  gap: 1rem;
+  font-family: 'Noto Sans KR', sans-serif; /* 깔끔한 한글 폰트 */
+
+  /* 모서리 둥글게 */
+  border-radius: 20px; /* 모서리 반경 조절 가능 */
+  overflow: hidden; /* 이미지가 둥글게 잘리도록 하는거 */
+
+}
+
+/* 서브 타이틀 */
+.banner h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 메인 타이틀 */
+.banner h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111;
+}
+
+/* 설명 문구 */
+.banner p {
+  font-size: 1rem;
+  color: #555;
+  max-width: 500px;
+}
+
+/* 입력 + 버튼 영역 */
+.banner input[type="text"] {
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  width: 100%;
+  max-width: 400px;
+  font-size: 1rem;
+  margin-top: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.banner input[type="text"]:focus {
+  border-color: black;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 버튼 */
+.banner button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  width: 250px;
+  border-radius: 8px;
+  border: none;
+  background-color: black;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.icon {
+  font-size: 0.8rem;
+}
+
+.banner button:hover {
+  background-color: #666;
+}
