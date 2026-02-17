@@ -36,6 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-# Spring Boot application config
+# Spring Boot 환경별 설정 파일
 src/main/resources/application-*.yml
-src/main/resources/application-*.properties
+# 단, 기본 application.yml은 커밋 가능하므로 제외
+!src/main/resources/application.yml
