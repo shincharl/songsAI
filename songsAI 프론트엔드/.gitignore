@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# API 환경 설정 파일 및 키값 올리는거 무시
+.env
+.env.production

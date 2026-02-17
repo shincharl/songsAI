@@ -45,7 +45,7 @@ const Signup = () => {
 
                     <div className={styles.signupArea}>
                         계정이 없나요?
-                            <Link to="/signin" className={styles.signupLink}>
+                            <Link to="/Register" className={styles.signupLink}>
                                 회원가입
                             </Link>
                     </div>

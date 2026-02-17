@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://real-db-ip:3306/beatai
+    username: realuser
+    password: realpassword
+
+cors:
+  allowed-origins:
+    http://localhost:5173 # 실제 http 경로 입력
