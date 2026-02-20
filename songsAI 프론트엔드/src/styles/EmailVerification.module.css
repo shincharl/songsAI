@@ -1,0 +1,84 @@
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 2px rgba(108,99,255,0.15);
+}
+
+.button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sendBtn {
+  background: #4f46e5;
+  color: white;
+}
+
+.sendBtn:hover {
+  background: #4338ca;
+}
+
+.verifyBtn {
+  background: #9333ea;
+  color: white;
+}
+
+.verifyBtn:hover {
+  background: #7e22ce;
+}
+
+.disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.timer {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.timer span {
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.expired span {
+  color: red;
+}
+
+.resend {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.success {
+  text-align: center;
+  color: green;
+  font-weight: bold;
+}

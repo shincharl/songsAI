@@ -1,7 +1,9 @@
 package com.example.BeatAI.controller;
 
 import com.example.BeatAI.dto.SignupRequestDto;
+import com.example.BeatAI.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,8 +17,11 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class RegisterController {
+
+  private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signupMessageSend(
@@ -33,6 +38,9 @@ public class RegisterController {
         return ResponseEntity.badRequest().body(errors);
       }
 
+      userService.signup(dto);
+
       return ResponseEntity.ok("회원가입 성공");
     }
+
 }

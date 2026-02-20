@@ -1,11 +1,14 @@
 import styles from "../../styles/Register.module.css"
 import logo from "../../assets/logo.png"
-import { User, Lock, Mail, Calendar, Phone, Eye, EyeOff, Smartphone } from "lucide-react"
+import { User, Lock, Calendar, Phone, Eye, EyeOff, Smartphone } from "lucide-react"
 import { useState } from "react"
 import type { RegisterFormData, ValidationErrors } from "../../types"
 import registerUserApi from "../../api/registerUserApi"
+import EmailVerification from "../../components/Login/EmailVerification"
+import { useNavigate } from "react-router-dom"
 
 const Register: React.FC = () => {
+
     const [showPw, setShowPw] = useState<boolean>(false)
     const carriers = ["SKT", "KT", "LG U+", "알뜰폰"]
 
@@ -15,6 +18,13 @@ const Register: React.FC = () => {
     // 에러처리 useState
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // 이메일 인증 상태
+    const [email, setEmail] = useState("");
+    const [emailVerified, setEmailVerified] = useState(false);
+
+    // navigate 초기화
+    const navigate = useNavigate();
+
     const handleSubmit = async() => {
         setLoading(true);
         try {
@@ -22,7 +32,7 @@ const Register: React.FC = () => {
             const data: RegisterFormData = {
                 username: form.username,
                 password: form.password,
-                email: form.email,
+                email: email,
                 birth: form.birth,
                 phoneNumber: form.phoneNumber,
                 carrier: form.carrier,
@@ -30,6 +40,7 @@ const Register: React.FC = () => {
 
             await registerUserApi(data);
             alert("회원가입 성공!");
+            navigate("/Signup");
 
         } catch (err: unknown) {
             
@@ -62,7 +73,7 @@ const Register: React.FC = () => {
             <User size={18} />
             <input 
                 type="text"
-                placeholder="아이디 @beatai.com" 
+                placeholder="아이디" 
                 value={form.username}
                 onChange={e =>{ 
                     setForm({...form, username: e.target.value});
@@ -102,25 +113,6 @@ const Register: React.FC = () => {
                     {errors.password && (
                         <p className={styles.errorText}>{errors.password}</p>
                     )}
-            </div>
-
-        <div className={styles.field}>
-          <div className={`${styles.inputBox} ${errors.email ? styles.errorInput : ""}`}>
-            <Mail size={18} />
-            <input 
-                type="text" 
-                placeholder="[선택] 이메일주소"
-                value={form.email}
-                onChange={e => setForm({...form, email: e.target.value})}
-                className={errors.email ? styles.errorInput : ""}
-                />
-          </div>
-
-            {/* email 없을 때 생기는 오류 태그 */}
-            {errors.email && (
-                <p className={styles.errorText}>{errors.email}</p>
-            )}
-
             </div>
         </div>
       </div>
@@ -196,15 +188,23 @@ const Register: React.FC = () => {
         </div>
         </div>
 
+        {/* 이메일 인증 */}
+        <div className={styles.box}>
+            <EmailVerification
+                email={email}
+                setEmail={setEmail}
+                onVerified={() => setEmailVerified(true)}
+            />
+        </div>
+
       <button 
         className={styles.verifyBtn}
         type="button"
         onClick={handleSubmit}
-        disabled={loading}
+        disabled={!emailVerified || loading}
         >
-            {loading ? "가입중..." : "인증요청"}
+            {loading ? "가입중..." : "회원가입"}
       </button>
-
     </div>
   )
 }

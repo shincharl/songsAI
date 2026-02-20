@@ -1,6 +1,7 @@
 package com.example.BeatAI.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -56,10 +57,16 @@ public class User {
     this.updatedAt = LocalDateTime.now();
   }
 
-  public User(String username, String passwordHash, String phoneNumber) {
+  @Builder
+  public User(String username, String passwordHash,
+              String phoneNumber, String email,
+              String carrier, LocalDate birth) {
     this.username = username;
     this.passwordHash = passwordHash;
     this.phoneNumber = phoneNumber;
+    this.email = email;
+    this.carrier = carrier;
+    this.birth = birth;
   }
 
 
