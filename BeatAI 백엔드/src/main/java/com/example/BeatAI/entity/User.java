@@ -26,6 +26,9 @@ public class User {
   @Column(nullable = false, length = 255)
   private String passwordHash;
 
+  @Column(nullable = true)
+  private String nickname;
+
   @Column(length = 20)
   private String carrier;
 
@@ -69,5 +72,17 @@ public class User {
     this.birth = birth;
   }
 
+  // 첫번째 로그인 시 닉네임 확인 및 저장 엔티티 메서드
+  public void setFirstNickname(String nickname){
+    if(this.nickname != null){
+      throw new IllegalStateException("닉네임 이미 존재!!!");
+    }
+    this.nickname = nickname;
+  }
+
+  // 닉네임 getter 추가
+  public String getFirstNickname() {
+    return this.nickname;
+  }
 
 }

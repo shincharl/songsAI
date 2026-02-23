@@ -11,3 +11,10 @@ export interface RegisterFormData {
 
 // 회원가입시 에러 발생했을때 전달되는 형식 타입
 export type ValidationErrors = Record<string, string>;
+
+// 로그인 시 (처음 로그인 X) 반환 인터페이스
+export interface LoginResponse {
+  accessToken: string;
+  firstLogin: boolean;
+  nickname: string | null; // 기존 회원이면 닉네임, 첫 로그인이면 null
+}

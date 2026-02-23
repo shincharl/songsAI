@@ -1,11 +1,15 @@
 package com.example.BeatAI.controller;
 
+import com.example.BeatAI.config.UserPrincipal;
+import com.example.BeatAI.dto.NicknameRequest;
 import com.example.BeatAI.dto.SignupRequestDto;
+import com.example.BeatAI.entity.User;
 import com.example.BeatAI.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +45,20 @@ public class RegisterController {
       userService.signup(dto);
 
       return ResponseEntity.ok("회원가입 성공");
+    }
+
+    @PostMapping("set-nickname")
+    public ResponseEntity<?> setNickname(
+      @RequestBody NicknameRequest request,
+      @AuthenticationPrincipal UserPrincipal userPrincipal
+      ){
+      String username = userPrincipal.getUsername(); // 토큰에서 추출
+
+      // 닉네임 변경 후 User 객체 반환
+      User updatedUser = userService.setNickname(username, request.getNickname());
+
+      // 서버에서 최종 닉네임 반환
+      return ResponseEntity.ok(Map.of("nickname", updatedUser.getNickname()));
     }
 
 }

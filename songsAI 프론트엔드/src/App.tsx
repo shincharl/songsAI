@@ -4,6 +4,7 @@ import Signup from "./pages/Login/Signup";
 import Layout from "./layouts/Layout";
 import LocalSignup from "./pages/Login/LocalSignup";
 import Register from "./pages/Login/Register";
+import SetFirstNickname from "./pages/Login/SetFitstNickname";
 
 const App = () => {
     return(
@@ -19,6 +20,7 @@ const App = () => {
                     <Route path="/Signup" element={<Signup />}/>
                     <Route path="/LocalSignup" element={<LocalSignup/>}/>
                     <Route path="/Register" element={<Register/>}/>
+                    <Route path="/set-nickname" element={<SetFirstNickname/>}></Route>
             </Routes>
 
     );

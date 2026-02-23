@@ -110,3 +110,9 @@ org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT *
 SELECT * FROM USERS 
 
 delete from users where user_id = 1 [42000-240]
+2026-02-23 18:36:23.778752+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete [*]* from user_id = 4752"; expected "identifier"; SQL statement:
+delete * from user_id = 4752 [42001-240]
+2026-02-23 18:36:34.893183+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete [*]* from users where user_id = 4752"; expected "identifier"; SQL statement:
+delete * from users where user_id = 4752 [42001-240]
