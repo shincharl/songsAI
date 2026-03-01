@@ -2,11 +2,14 @@ import { useState } from "react";
 import styles from "../../styles/Header.module.css"; // Tailwind 클래스 묶은 모듈
 import logo from "../../assets/logo.png"
 import {FiSearch} from "react-icons/fi"
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
 
     const [activeTab, setActiveTab] = useState("추천");
     const [searchQuery, setSearchQuery] = useState("");
+
+    const navigate = useNavigate();
 
     const tabs = ["감정 일기", "친구 추천", "플레이리스트", "커뮤니티"]
 
@@ -14,14 +17,22 @@ const Header = () => {
         <header className={styles.header}>
             <div className={styles.inner}>
                 {/* 로고 */}
-                <img src={logo} alt="logo" className={styles.logo} />
+                <img 
+                    src={logo}
+                    alt="logo"
+                    className={styles.logo}
+                    onClick={() => navigate("/")}
+                    />
 
                 {/* 네비게이션 */}
                 <nav className={styles.nav}>
                     {tabs.map((tab) => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab)}
+                            onClick={() => {
+                                setActiveTab(tab);
+                                if (tab === "감정 일기") navigate("/EmotionDiaryPage");
+                            }}
                             className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
                         >
                             {tab}

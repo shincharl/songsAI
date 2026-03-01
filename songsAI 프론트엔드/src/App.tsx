@@ -5,6 +5,7 @@ import Layout from "./layouts/Layout";
 import LocalSignup from "./pages/Login/LocalSignup";
 import Register from "./pages/Login/Register";
 import SetFirstNickname from "./pages/Login/SetFitstNickname";
+import EmotionDiaryPage from "./pages/EmotionDiaryPage/EmotionDiaryPage";
 
 const App = () => {
     return(
@@ -14,6 +15,7 @@ const App = () => {
                     {/* Layout 적용되는 페이지 */}
                     <Route element={<Layout/>}>
                         <Route path="/" element={<Home />}/>
+                        <Route path="EmotionDiaryPage" element={<EmotionDiaryPage/>}/>
                     </Route>
 
                     {/* Layout 적용되지 않는 페이지 */}

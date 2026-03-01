@@ -1,4 +1,8 @@
 /* index.css 또는 App.css */
+/* ===== 폰트 import (맨 위!!) ===== */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap");
+
 * {
   margin: 0;
   padding: 0;

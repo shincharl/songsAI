@@ -1,0 +1,43 @@
+.banner {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(1.03);
+}
+
+.textArea {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-1deg);
+  width: 80%;
+  text-align: center;
+}
+
+.typing {
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 2.6rem;
+  color: #2b2b2b;
+  white-space: nowrap;
+}
+
+.cursor {
+  display: inline-block;
+  margin-left: 5px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
