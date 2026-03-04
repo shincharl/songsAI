@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 public class EmotionLog {
 
-  @Id @GeneratedValue
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "EMOTIONLOG_ID")
   private Long id;
 
@@ -30,4 +30,16 @@ public class EmotionLog {
   void prePersist(){
     this.createdAt = LocalDateTime.now();
   }
+
+  /*
+  * 감정 데이터 저장 메서드
+  * */
+  public static EmotionLog create(Diary diary, EmotionType emotion, Double score){
+    EmotionLog log = new EmotionLog();
+    log.diary = diary;
+    log.emotion = emotion;
+    log.score = score;
+    return log;
+  }
+
 }

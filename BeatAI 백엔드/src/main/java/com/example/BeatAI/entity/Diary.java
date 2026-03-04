@@ -2,15 +2,17 @@ package com.example.BeatAI.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
 public class Diary {
 
-  @Id @GeneratedValue
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "DIARY_ID")
   private Long id;
 
@@ -38,6 +40,23 @@ public class Diary {
   @PreUpdate
   void preUpdate(){
     this.updatedAt = LocalDateTime.now();
+  }
+
+  /*
+  * 일기 생성 메서드
+  * */
+  public static Diary create(User user, String content){
+    Diary diary = new Diary();
+    diary.user = user;
+    diary.content = content;
+    return diary;
+  }
+  
+  /*
+  * 일기 수정 메서드
+  * */
+  public void updateContent(String content) {
+    this.content = content;
   }
 
 }

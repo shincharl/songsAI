@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "../../styles/WriteDiaryModal.module.css"
 import Sticker from "./Sticker";
+import analyzeDiary from "../../api/diary";
 
 interface Props {
     onClose: () => void;
@@ -57,12 +58,16 @@ const CATEGORY_NAME = {
 
 const WriteDiaryModel = ({ onClose }: Props) => {
 
-    const [stickers, setStickers] = useState<string[]>([]);
-    const [text, setText] = useState("");
+    // const [stickers, setStickers] = useState<string[]>([]);
+    // const [text, setText] = useState("");
 
     const [pages, setPages] = useState<string[]>([""]); // 최소 한 페이지
     const [currentPage, setCurrentPage] = useState(0);
     const [stickersPerPage, setStickersPerPage] = useState<string[][]>([[]]); // 페이지별 스티커
+
+    const [loading, setLoading] = useState(false);
+    const [done, setDone] = useState(false);
+    const [stepText, setStepText] = useState("AI가 감정을 분석중입니다...");
     
     // 스티커 추가 메서드
     const addSticker = (img: string) => {
@@ -91,6 +96,51 @@ const WriteDiaryModel = ({ onClose }: Props) => {
             setStickersPerPage([...stickersPerPage, []]);
         }
     }
+
+    const handleAnalyze = async () => {
+      const fullText = pages.join("\n");
+
+      //  단계 타이머 id 저장용
+      let stepTimer: number | null = null;
+
+      try {
+
+        setLoading(true);
+        setDone(false);
+
+        // 1단계 문구
+        setStepText("AI가 감정을 분석중입니다...");
+
+        // 2~3단계 자동 전환 (총 3초 느낌)
+        stepTimer = window.setTimeout(() => {
+          setStepText("문맥을 이해하는 중...");
+        }, 900);
+
+        window.setTimeout(() => {
+          setStepText("감정 패턴을 계산중...");
+        }, 1800);
+
+        await analyzeDiary(fullText);
+
+        setDone(true);
+        setStepText("분석 & 저장 완료!");
+     
+        window.setTimeout(() => {
+          setLoading(false);
+          setDone(false);
+          onClose();
+        }, 1200);
+
+      } catch (error) {
+        console.log(error);
+        alert("분석 중 오류가 발생했습니다.");
+        setLoading(false);
+        setDone(false);
+      } finally {
+        // 타이머 정리
+        if (stepTimer) window.clearTimeout(stepTimer);
+      }
+    };
 
 return (
   <div className={styles.overlay}>
@@ -190,7 +240,11 @@ return (
           </div>
 
             <div className={styles.noteActions}>
-                <button className={styles.saveAnalyzeBtn}>
+                <button 
+                  className={styles.saveAnalyzeBtn}
+                  onClick={handleAnalyze}
+                  disabled={loading}
+                  >
                     일기 저장 & AI 분석
                 </button>
             </div>
@@ -198,8 +252,36 @@ return (
         </div>
       </div>
 
-      <button className={styles.closeBtn} onClick={onClose}>✖</button>
+      <button 
+        className={styles.closeBtn} 
+        onClick={onClose}
+        disabled={loading}
+        >
+          ✖
+      </button>
 
+      
+      {loading && (
+        <div className={styles.analyzeOverlay}>
+          <div className={styles.analyzeBox}>
+            {!done ? (
+              <>
+                <div className={styles.starArea}>
+                  <span className={styles.star}>✨</span>
+                  <span className={styles.star}>⭐</span>
+                  <span className={styles.star}>✨</span>
+                </div>
+                <div className={styles.analyzeText}>{stepText}</div>
+              </>
+            ): (
+              <>
+                <div className={styles.doneIcon}>✅</div>
+                <div className={styles.doneText}>분석 & 저장 완료!</div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   </div>
 );

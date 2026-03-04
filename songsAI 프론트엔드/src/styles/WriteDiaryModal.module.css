@@ -211,3 +211,78 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(0,0,0,0.25);
 }
+
+/* 썸네일 디자인 */
+
+.thumbPreview {
+  width: 100%;
+  height: 100%;
+  
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 8px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+/* AI 분석 로딩창 디자인 */
+
+.analyzeOverlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.analyzeBox{
+  background: #1e1f22;
+  padding: 36px 48px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+  min-width: 280px;
+}
+
+.starArea{
+  font-size: 42px;
+  margin-bottom: 16px;
+}
+
+.star{
+  display: inline-block;
+  margin: 0 6px;
+  animation: twinkle 1.2s infinite;
+}
+
+.star:nth-child(2){ animation-delay: 0.25s; }
+.star:nth-child(3){ animation-delay: 0.5s; }
+
+@keyframes twinkle{
+  0%{ opacity:0.3; transform: scale(0.85) rotate(-6deg); }
+  50%{ opacity:1; transform: scale(1.18) rotate(6deg); }
+  100%{ opacity:0.3; transform: scale(0.85) rotate(-6deg); }
+}
+
+.analyzeText{
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.doneIcon{
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.doneText{
+  color: #ffb347;
+  font-size: 20px;
+  font-weight: 800;
+}

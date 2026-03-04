@@ -1,9 +1,6 @@
 package com.example.BeatAI.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class SignupVerification {
 
-  @Id @GeneratedValue
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String email;
