@@ -1,0 +1,113 @@
+.calendarWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.calendarWrapper :global(.react-calendar) {
+  width: 100%;
+  max-width: 680px;
+  border: 1px solid rgba(255, 182, 202, 0.28);
+  border-radius: 24px;
+  padding: 22px 20px 18px;
+  background: linear-gradient(180deg, #fffefe 0%, #fff7fa 100%);
+  box-shadow:
+    0 18px 40px rgba(255, 154, 178, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-family: inherit;
+}
+
+.calendarWrapper :global(.react-calendar__navigation) {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.calendarWrapper :global(.react-calendar__navigation button) {
+  min-width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4a3b42;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.calendarWrapper :global(.react-calendar__navigation button:hover) {
+  background: #ffe8f0;
+  color: #e85d88;
+}
+
+.calendarWrapper :global(.react-calendar__navigation__label) {
+  font-size: 17px;
+  font-weight: 800;
+  color: #2d2328;
+}
+
+.calendarWrapper :global(.react-calendar__month-view__weekdays) {
+  margin-bottom: 10px;
+  text-transform: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: #b08996;
+}
+
+.calendarWrapper :global(.react-calendar__month-view__weekdays abbr) {
+  text-decoration: none;
+}
+
+.calendarWrapper :global(.react-calendar__tile) {
+  border: none;
+  background: transparent;
+  border-radius: 16px;
+  padding: 12px 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3b2f35;
+  transition: all 0.2s ease;
+}
+
+.calendarWrapper :global(.react-calendar__tile:enabled:hover) {
+  background: #ffeaf1;
+  color: #d94f7a;
+  transform: translateY(-1px);
+}
+
+.calendarWrapper :global(.react-calendar__tile--now) {
+  background: #fff0f5;
+  color: #d94f7a;
+  box-shadow: inset 0 0 0 1px rgba(233, 93, 136, 0.18);
+}
+
+.calendarWrapper :global(.react-calendar__tile--active) {
+  background: linear-gradient(135deg, #ff7fa4 0%, #ff9fbc 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(255, 122, 158, 0.28);
+}
+
+.calendarWrapper :global(.react-calendar__month-view__days__day--neighboringMonth) {
+  color: #d7c6cd;
+}
+
+.calendarWrapper :global(.react-calendar__tile:disabled) {
+  background: transparent;
+  color: #d7c6cd;
+}
+
+.previewCard {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f5f7fa;
+}
+
+.previewDate {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.previewText {
+  color: #555;
+}

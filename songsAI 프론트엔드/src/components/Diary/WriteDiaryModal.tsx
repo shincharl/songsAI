@@ -1,50 +1,58 @@
 import { useState } from "react";
 import styles from "../../styles/WriteDiaryModal.module.css"
 import Sticker from "./Sticker";
-import analyzeDiary from "../../api/diary";
+import {analyzeDiary} from "../../api/diary";
 
 interface Props {
     onClose: () => void;
 }
 
+type StickerCategory = "emotion" | "weather" | "deco" | "study" | "food";
+
+type StickerItem = {
+  img: string;
+  label: string;
+  category: StickerCategory;
+};
+
 const STICKERS = {
   emotion: [
-    "https://cdn-icons-png.flaticon.com/512/742/742751.png", // 😊
-    "https://cdn-icons-png.flaticon.com/512/742/742752.png", // 😢
-    "https://cdn-icons-png.flaticon.com/512/742/742753.png", // 😡
-    "https://cdn-icons-png.flaticon.com/512/742/742790.png", // 😍
-    "https://cdn-icons-png.flaticon.com/512/742/742774.png", // 😴
-    "https://cdn-icons-png.flaticon.com/512/742/742802.png", // 🤯
+    { img: "https://cdn-icons-png.flaticon.com/512/742/742751.png", label: "😊 행복" },
+    { img: "https://cdn-icons-png.flaticon.com/512/742/742752.png", label: "😢 슬픔" },
+    { img: "https://cdn-icons-png.flaticon.com/512/742/742753.png", label: "😡 화남" },
+    { img: "https://cdn-icons-png.flaticon.com/512/742/742790.png", label: "😍 설렘" },
+    { img: "https://cdn-icons-png.flaticon.com/512/742/742774.png", label: "😴 피곤" },
+    { img: "https://cdn-icons-png.flaticon.com/512/742/742802.png", label: "🤯 스트레스" },
   ],
 
   weather: [
-    "https://cdn-icons-png.flaticon.com/512/869/869869.png", // ☀️
-    "https://cdn-icons-png.flaticon.com/512/414/414927.png", // ☁️
-    "https://cdn-icons-png.flaticon.com/512/414/414974.png", // 🌧️
-    "https://cdn-icons-png.flaticon.com/512/642/642102.png", // 🌈
-    "https://cdn-icons-png.flaticon.com/512/1779/1779940.png", // ❄️
+    { img: "https://cdn-icons-png.flaticon.com/512/869/869869.png", label: "☀️ 맑음" },
+    { img: "https://cdn-icons-png.flaticon.com/512/414/414927.png", label: "☁️ 흐림" },
+    { img: "https://cdn-icons-png.flaticon.com/512/414/414974.png", label: "🌧️ 비" },
+    { img: "https://cdn-icons-png.flaticon.com/512/642/642102.png", label: "🌈 무지개" },
+    { img: "https://cdn-icons-png.flaticon.com/512/1779/1779940.png", label: "❄️ 눈" },
   ],
 
   deco: [
-    "https://cdn-icons-png.flaticon.com/512/616/616490.png", // ⭐
-    "https://cdn-icons-png.flaticon.com/512/833/833472.png", // ❤️
-    "https://cdn-icons-png.flaticon.com/512/616/616494.png", // ✨
-    "https://cdn-icons-png.flaticon.com/512/2921/2921222.png", // 🎀
-    "https://cdn-icons-png.flaticon.com/512/3468/3468371.png", // 🌸
+    { img: "https://cdn-icons-png.flaticon.com/512/616/616490.png", label: "⭐ 반짝" },
+    { img: "https://cdn-icons-png.flaticon.com/512/833/833472.png", label: "❤️ 사랑" },
+    { img: "https://cdn-icons-png.flaticon.com/512/616/616494.png", label: "✨ 반짝반짝" },
+    { img: "https://cdn-icons-png.flaticon.com/512/2921/2921222.png", label: "🎀 리본" },
+    { img: "https://cdn-icons-png.flaticon.com/512/3468/3468371.png", label: "🌸 꽃" },
   ],
 
   study: [
-    "https://cdn-icons-png.flaticon.com/512/3135/3135755.png", // 📚
-    "https://cdn-icons-png.flaticon.com/512/1828/1828884.png", // ✏️
-    "https://cdn-icons-png.flaticon.com/512/3050/3050525.png", // 📅
-    "https://cdn-icons-png.flaticon.com/512/2913/2913465.png", // ⏰
+    { img: "https://cdn-icons-png.flaticon.com/512/3135/3135755.png", label: "📚 공부" },
+    { img: "https://cdn-icons-png.flaticon.com/512/1828/1828884.png", label: "✏️ 필기" },
+    { img: "https://cdn-icons-png.flaticon.com/512/3050/3050525.png", label: "📅 일정" },
+    { img: "https://cdn-icons-png.flaticon.com/512/2913/2913465.png", label: "⏰ 시간" },
   ],
 
   food: [
-    "https://cdn-icons-png.flaticon.com/512/1046/1046784.png", // 🍔
-    "https://cdn-icons-png.flaticon.com/512/1046/1046786.png", // 🍕
-    "https://cdn-icons-png.flaticon.com/512/1046/1046790.png", // 🍰
-    "https://cdn-icons-png.flaticon.com/512/1046/1046793.png", // 🍜
+    { img: "https://cdn-icons-png.flaticon.com/512/1046/1046784.png", label: "🍔 햄버거" },
+    { img: "https://cdn-icons-png.flaticon.com/512/1046/1046786.png", label: "🍕 피자" },
+    { img: "https://cdn-icons-png.flaticon.com/512/1046/1046790.png", label: "🍰 케이크" },
+    { img: "https://cdn-icons-png.flaticon.com/512/1046/1046793.png", label: "🍜 라면" },
   ]
 };
 
@@ -63,17 +71,25 @@ const WriteDiaryModel = ({ onClose }: Props) => {
 
     const [pages, setPages] = useState<string[]>([""]); // 최소 한 페이지
     const [currentPage, setCurrentPage] = useState(0);
-    const [stickersPerPage, setStickersPerPage] = useState<string[][]>([[]]); // 페이지별 스티커
+    const [stickersPerPage, setStickersPerPage] = useState<StickerItem[][]>([[]]);
 
     const [loading, setLoading] = useState(false);
     const [done, setDone] = useState(false);
     const [stepText, setStepText] = useState("AI가 감정을 분석중입니다...");
     
     // 스티커 추가 메서드
-    const addSticker = (img: string) => {
-        const newStickers = [...stickersPerPage];
-        newStickers[currentPage] = [...newStickers[currentPage], img];
-        setStickersPerPage(newStickers);
+    const addSticker = (
+        category: StickerCategory,
+        sticker: { img: string; label: string }
+    ) => {
+      const newSticker: StickerItem = {
+          ...sticker,
+          category,
+      };
+
+      const newStickers = [...stickersPerPage];
+      newStickers[currentPage] = [...newStickers[currentPage], newSticker];
+      setStickersPerPage(newStickers);
     };
 
     // TextArea 넘침 감지 & 페이지 자동 추가
@@ -100,8 +116,24 @@ const WriteDiaryModel = ({ onClose }: Props) => {
     const handleAnalyze = async () => {
       const fullText = pages.join("\n");
 
+      const stickers = stickersPerPage.flatMap((stickers, pageIndex) => 
+        stickers.map((sticker) => ({
+          category: sticker.category,
+          label: sticker.label,
+          img: sticker.img,
+          page: pageIndex,
+        }))
+      );
+
+      const payload = {
+        content: fullText,
+        pages,
+        stickers,
+      }
+
       //  단계 타이머 id 저장용
-      let stepTimer: number | null = null;
+      let stepTimer1: number | null = null;
+      let stepTimer2: number | null = null;
 
       try {
 
@@ -112,15 +144,15 @@ const WriteDiaryModel = ({ onClose }: Props) => {
         setStepText("AI가 감정을 분석중입니다...");
 
         // 2~3단계 자동 전환 (총 3초 느낌)
-        stepTimer = window.setTimeout(() => {
+        stepTimer1 = window.setTimeout(() => {
           setStepText("문맥을 이해하는 중...");
         }, 900);
 
-        window.setTimeout(() => {
+        stepTimer2 = window.setTimeout(() => {
           setStepText("감정 패턴을 계산중...");
         }, 1800);
 
-        await analyzeDiary(fullText);
+        await analyzeDiary(payload);
 
         setDone(true);
         setStepText("분석 & 저장 완료!");
@@ -138,7 +170,8 @@ const WriteDiaryModel = ({ onClose }: Props) => {
         setDone(false);
       } finally {
         // 타이머 정리
-        if (stepTimer) window.clearTimeout(stepTimer);
+        if (stepTimer1) window.clearTimeout(stepTimer1);
+        if (stepTimer2) window.clearTimeout(stepTimer2);
       }
     };
 
@@ -171,15 +204,15 @@ return (
               <h4>{CATEGORY_NAME[category as keyof typeof CATEGORY_NAME]}</h4>
 
               <div className={styles.stickerRow}>
-                {list.map((img, i) => (
+                {list.map((sticker, i) => (
                   <button
                     key={i}
-                    onClick={() => addSticker(img)}
+                    onClick={() => addSticker(category as StickerCategory, sticker)}
                     className={styles.stickerBtn}
                   >
                     <img 
-                        src={img} 
-                        alt="sticker"
+                        src={sticker.img}
+                        alt={sticker.label}
                         draggable={false} 
                         onDragStart={(e) => e.preventDefault()}
                         />
@@ -225,10 +258,10 @@ return (
                 placeholder="오늘 어떤 일이 있었나요?"
             />
 
-            {stickersPerPage[currentPage].map((img, i) => (
+            {stickersPerPage[currentPage].map((sticker, i) => (
               <Sticker
                 key={i}
-                img={img}
+                img={sticker.img}
                 onDoubleClick={() => {
                     // i번째 스티커 삭제
                     const newStickers = [...stickersPerPage];

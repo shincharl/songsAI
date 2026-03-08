@@ -2,16 +2,17 @@ package com.example.BeatAI.controller;
 
 import com.example.BeatAI.config.UserPrincipal;
 import com.example.BeatAI.dto.DiaryAnalyzeRequest;
+import com.example.BeatAI.dto.DiaryCalendarResponse;
+import com.example.BeatAI.dto.WeeklyEmotionResponse;
 import com.example.BeatAI.entity.Diary;
+import com.example.BeatAI.entity.User;
 import com.example.BeatAI.service.DiaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,7 +29,7 @@ public class DiaryController {
     ){
     Diary saved = diaryService.saveAndAnalyze(
       userPrincipal.getUser(),
-      request.getText()
+      request
     );
 
     return ResponseEntity.ok(Map.of(
@@ -37,4 +38,38 @@ public class DiaryController {
       "diaryId", saved.getId()
     ));
   }
+
+  // 7일간 감정 분석 결과 반환 메서드
+  @GetMapping("/weekly-emotions")
+  public ResponseEntity<List<WeeklyEmotionResponse>> getWeeklyEmotions(
+    @AuthenticationPrincipal UserPrincipal userPrincipal
+  ){
+    return ResponseEntity.ok(
+      diaryService.getWeeklyEmotions(userPrincipal.getUser())
+    );
+  }
+
+  // 오늘의 일기 데이터 텍스트 뽑아오는 메서드
+  @GetMapping("/today")
+  public ResponseEntity<?> getTodayDiaryPreview(
+    @AuthenticationPrincipal UserPrincipal userPrincipal
+  ){
+    User user = userPrincipal.getUser();
+    return ResponseEntity.ok(diaryService.getTodayDiaryPreview(user));
+  }
+
+  @GetMapping("/calendar")
+  public ResponseEntity<List<DiaryCalendarResponse>> getMonthlyCalendar(
+    @AuthenticationPrincipal UserPrincipal userPrincipal,
+    @RequestParam int year,
+    @RequestParam int month
+  ) {
+    User user = userPrincipal.getUser();
+
+    List<DiaryCalendarResponse> result =
+        diaryService.getMonthlyCalendar(user, year, month);
+
+    return ResponseEntity.ok(result);
+  }
+
 }

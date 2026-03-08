@@ -1,0 +1,118 @@
+/* 오른쪽 미리보기 카드 */
+.previewCard {
+  position: relative;
+  background: linear-gradient(180deg, #fff7fa 0%, #fffdfd 100%);
+  border: 1px solid #f4dbe4;
+  border-radius: 30px;
+  padding: 26px;
+  box-shadow:
+    0 20px 45px rgba(214, 120, 156, 0.10),
+    0 8px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* 위쪽 은은한 장식 */
+.previewCard::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(255, 210, 225, 0.45) 0%, rgba(255, 210, 225, 0) 70%);
+  pointer-events: none;
+}
+
+/* 아래쪽 장식 */
+.previewCard::after {
+  content: "";
+  position: absolute;
+  bottom: -70px;
+  left: -50px;
+  width: 170px;
+  height: 170px;
+  background: radial-gradient(circle, rgba(255, 233, 240, 0.7) 0%, rgba(255, 233, 240, 0) 72%);
+  pointer-events: none;
+}
+
+.previewHeader {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #c9547f;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #f3d4df;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(4px);
+}
+
+.previewHeader::before {
+  content: "📝";
+  font-size: 1rem;
+}
+
+/* 안쪽 종이 카드 */
+.previewBody {
+  position: relative;
+  background: linear-gradient(180deg, #ffffff 0%, #fffafb 100%);
+  border-radius: 24px;
+  padding: 22px 20px 18px;
+  border: 1px solid #f5e5eb;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 10px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* 종이 상단 라인 느낌 */
+.previewBody::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f6dfe7, transparent);
+}
+
+.previewBody p {
+  margin: 12px 0 18px;
+  color: #4a4450;
+  line-height: 1.85;
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+}
+
+.previewTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.previewTags span {
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff6f9 0%, #ffeef4 100%);
+  color: #b44f73;
+  font-size: 0.87rem;
+  font-weight: 700;
+  border: 1px solid #f6d8e2;
+  box-shadow: 0 4px 10px rgba(212, 113, 150, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.previewTags span:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(212, 113, 150, 0.12);
+}

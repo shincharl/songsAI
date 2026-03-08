@@ -2,9 +2,11 @@ package com.example.BeatAI.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 public class EmotionLog {
 
