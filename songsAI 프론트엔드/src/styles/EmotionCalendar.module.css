@@ -1,14 +1,16 @@
 .calendarWrapper {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
 .calendarWrapper :global(.react-calendar) {
   width: 100%;
   max-width: 680px;
   border: 1px solid rgba(255, 182, 202, 0.28);
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 22px 20px 18px;
   background: linear-gradient(180deg, #fffefe 0%, #fff7fa 100%);
   box-shadow:
@@ -67,6 +69,7 @@
   font-weight: 600;
   color: #3b2f35;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .calendarWrapper :global(.react-calendar__tile:enabled:hover) {
@@ -96,18 +99,190 @@
   color: #d7c6cd;
 }
 
-.previewCard {
-  margin-top: 20px;
-  padding: 16px;
-  border-radius: 12px;
-  background: #f5f7fa;
+.tileContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.emotionSticker {
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(255, 122, 158, 0.18));
+}
+
+/* preview card base */
+.previewBox {
+  width: 100%;
+  max-width: 680px;
+  margin-top: 6px;
+  padding: 18px;
+  border-radius: 22px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255, 220, 230, 0.75);
+  box-shadow:
+    0 14px 30px rgba(255, 154, 178, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* 위 장식 */
+.previewBox::before {
+  content: "";
+  position: absolute;
+  top: -36px;
+  right: -26px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+}
+
+/* 감정별 카드 */
+.happyCard {
+  background: linear-gradient(135deg, #fff8dc 0%, #ffe9f3 100%);
+  border-color: #ffdbe8;
+}
+
+.sadCard {
+  background: linear-gradient(135deg, #f2f6ff 0%, #ecebff 100%);
+  border-color: #dbe4ff;
+}
+
+.angryCard {
+  background: linear-gradient(135deg, #fff1ee 0%, #ffe1df 100%);
+  border-color: #ffd0cb;
+}
+
+.excitedCard {
+  background: linear-gradient(135deg, #fff0f8 0%, #f4e8ff 100%);
+  border-color: #ead6ff;
+}
+
+.calmCard {
+  background: linear-gradient(135deg, #effff8 0%, #e5faf5 100%);
+  border-color: #d1f1e7;
+}
+
+.neutralCard {
+  background: linear-gradient(135deg, #fbfbfb 0%, #f2f2f2 100%);
+  border-color: #e8e8e8;
+}
+
+.previewHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.previewHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.previewEmoji {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.previewDateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.previewLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #9f8a92;
+  text-transform: uppercase;
 }
 
 .previewDate {
-  font-weight: bold;
-  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #2f2328;
+}
+
+.previewBadge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #6a5860;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .previewText {
-  color: #555;
+  position: relative;
+  z-index: 1;
+  padding: 14px 15px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  line-height: 1.75;
+  color: #4d4046;
+  word-break: keep-all;
+}
+
+.emptyText {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  color: #8f7b83;
+  text-align: center;
+  padding: 20px 12px;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 16px;
+  border: 1px dashed rgba(200, 200, 200, 0.5);
+}
+
+@media (max-width: 768px) {
+  .calendarWrapper :global(.react-calendar) {
+    padding: 18px 14px 14px;
+    border-radius: 22px;
+  }
+
+  .calendarWrapper :global(.react-calendar__tile) {
+    padding: 10px 4px;
+    font-size: 13px;
+  }
+
+  .emotionSticker {
+    font-size: 16px;
+  }
+
+  .previewBox {
+    padding: 16px 14px 14px;
+    border-radius: 18px;
+  }
+
+  .previewHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .previewText {
+    font-size: 13px;
+    line-height: 1.7;
+  }
 }

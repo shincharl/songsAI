@@ -3,20 +3,11 @@ import DiaryBanner from "../../components/Diary/DiaryBanner";
 import styles from "../../styles/EmotionDiaryPage.module.css";
 import WriteDiaryModal from "../../components/Diary/WriteDiaryModal";
 import WeeklyEmotionChart from "../../components/Diary/WeeklyEmotionChart";
-import { getMonthlyCalendar, getTodayDiaryPreview, getWeeklyEmotions } from "../../api/diary";
+import { getMonthlyCalendar, getRecommendedMusic, getTodayDiaryPreview, getWeeklyEmotions, type YoutubeVideoItem } from "../../api/diary";
 import DiaryPreviewCard from "../../components/Diary/DiaryPreviewCard";
 import EmotionCalendar from "../../components/Diary/EmotionCalendar";
+import RecommendedMusicPlayer from "../../components/Diary/RecommendedMusicPlayer";
 
-// const mockData = [
-//   { emotion: "HAPPY", score: 86.0 },
-//   { emotion: "SAD", score: 51.1 },
-//   { emotion: "EXCITED", score: 35.5 },
-//   { emotion: "CALM", score: 21.5 },
-//   { emotion: "ANGRY", score: 6.0 },
-//   { emotion: "NEUTRAL", score: 0.0 },
-// ];
-
-// const diaryContent = "오늘은 조금 지쳤지만, 그래도 나름 괜찮은 하루였다.";
 
 interface DiaryCalendarItem {
   diaryId: number;
@@ -40,6 +31,12 @@ const EmotionDiaryPage = () => {
   const [calendarData, setCalendarData] = useState<DiaryCalendarItem[]>([]);
   const [calendarLoading, setCalendarLoading] = useState(true);
 
+  const [todayDiaryId, setTodayDiaryId] = useState<number | null>(null);
+  const [musicVideos, setMusicVideos] = useState<YoutubeVideoItem[]>([]);
+  const [musicMoodTitle, setMusicMoodTitle] = useState("");
+  const [musicMoodDesc, setMusicMoodDesc] = useState("");
+  const [musicLoading, setMusicLoading] = useState(true);
+
   useEffect(() => {
     document.body.style.overflow = openModal ? "hidden" : "auto";
 
@@ -55,7 +52,40 @@ const EmotionDiaryPage = () => {
 
   useEffect(() => {
     fetchMonthlyCalendar(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate.getFullYear(), selectedDate.getMonth()]);
+
+  useEffect(() => {
+    const fetchMusicRecommendation = async () => {
+      if (!todayDiaryId) {
+        setMusicVideos([]);
+        setMusicMoodTitle("");
+        setMusicMoodDesc("");
+        setMusicLoading(false);
+        return;
+      }
+
+      try {
+        setMusicLoading(true);
+        console.log("todayDiaryId:", todayDiaryId);
+
+        const data = await getRecommendedMusic(todayDiaryId);
+        console.log("추천 음악 응답:", data);
+
+        setMusicVideos(data.videos || []);
+        setMusicMoodTitle(data.moodTitle || "");
+        setMusicMoodDesc(data.moodDesc || "");
+      } catch (error) {
+        console.error("추천 음악 조회 실패:", error);
+        setMusicVideos([]);
+        setMusicMoodTitle("");
+        setMusicMoodDesc("");
+      }finally {
+        setMusicLoading(false);
+      }
+    };
+
+    fetchMusicRecommendation();
+  }, [todayDiaryId]);
 
   // 주간 감정 데이터 조회 fetch
   const fetchWeeklyEmotionData = async() => {
@@ -77,10 +107,14 @@ const EmotionDiaryPage = () => {
         setPreviewLoading(true);
         const data = await getTodayDiaryPreview();
 
+        console.log("today preview 응답:", data);
+
+        setTodayDiaryId(data.diaryId ?? null);
         setDiaryContent(data.content || "");
         setDiaryStickers(data.stickers || []);
     } catch (error) {
         console.log("오늘 일기 미리보기 조회 실패:", error);
+        setTodayDiaryId(null);
         setDiaryContent("");
         setDiaryStickers([]);
     } finally {
@@ -138,6 +172,37 @@ const EmotionDiaryPage = () => {
           />
         </section>
 
+        <section className={styles.musicSection}>
+          <div className={styles.musicHeader}>
+            <h3 className={styles.sectionTitle}>오늘 감정에 어울리는 음악</h3>
+            <p className={styles.sectionDesc}>
+              AI가 오늘 일기 분위기를 바탕으로 추천한 유튜브 영상이에요.
+            </p>
+          </div>
+
+          <div className={styles.musicCard}>
+            <div className={styles.musicMoodBox}>
+              <span className={styles.musicBadge}>AI 추천</span>
+              <h4 className={styles.musicMoodTitle}>
+                오늘의 무드: {musicMoodTitle || "추천 준비 중"}
+              </h4>
+              <p className={styles.musicMoodDesc}>
+                {musicMoodDesc || "오늘 일기를 바탕으로 어울리는 음악을 추천하고 있어요."}
+              </p>
+            </div>
+
+            {musicLoading ? (
+              <p>추천 음악 불러오는 중...</p>
+            ) : (
+              <RecommendedMusicPlayer
+              videos={musicVideos}
+              title="추천 플레이리스트"
+              subtitle="지금 감정과 잘 어울리는 영상 5개를 골라봤어요."
+              />
+            )}
+          </div>
+        </section>
+
         <section className={styles.chartSection}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>이번 주 감정 한눈에 보기</h3>
@@ -154,13 +219,8 @@ const EmotionDiaryPage = () => {
             )}
           </div>
         </section>
-      </main>
 
-      {openModal && (
-        <WriteDiaryModal onClose={() => setOpenModal(false)} />
-      )}
-
-      <section className={styles.calendarSection}>
+        <section className={styles.calendarSection}>
           <div className={styles.calendarHeader}>
             <h3 className={styles.calendarTitle}>감정 달력</h3>
             <p className={styles.calendarDesc}>
@@ -181,6 +241,11 @@ const EmotionDiaryPage = () => {
         </div>
       </section>
 
+      </main>
+
+      {openModal && (
+        <WriteDiaryModal onClose={() => setOpenModal(false)} />
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ package com.example.BeatAI.controller;
 import com.example.BeatAI.config.UserPrincipal;
 import com.example.BeatAI.dto.DiaryAnalyzeRequest;
 import com.example.BeatAI.dto.DiaryCalendarResponse;
+import com.example.BeatAI.dto.MusicRecommendationResponse;
 import com.example.BeatAI.dto.WeeklyEmotionResponse;
 import com.example.BeatAI.entity.Diary;
 import com.example.BeatAI.entity.User;
@@ -70,6 +71,14 @@ public class DiaryController {
         diaryService.getMonthlyCalendar(user, year, month);
 
     return ResponseEntity.ok(result);
+  }
+
+  @GetMapping("/{diaryId}/music")
+  public MusicRecommendationResponse getMusic(
+    @AuthenticationPrincipal UserPrincipal userPrincipal,
+    @PathVariable Long diaryId
+  ) {
+    return diaryService.getRecommendedMusic(userPrincipal.getUser(), diaryId);
   }
 
 }

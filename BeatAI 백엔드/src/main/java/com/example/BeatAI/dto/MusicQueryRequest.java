@@ -2,13 +2,11 @@ package com.example.BeatAI.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class TodayDiaryPreviewResponse {
-  private Long diaryId;
+public class MusicQueryRequest {
   private String content;
-  private List<String> stickers;
 }

@@ -24,6 +24,15 @@ const emotionStickerMap: Record<string, string> = {
   NEUTRAL: "🙂",
 };
 
+const emotionStyleMap: Record<string, string> = {
+  HAPPY: styles.happyCard,
+  SAD: styles.sadCard,
+  ANGRY: styles.angryCard,
+  EXCITED: styles.excitedCard,
+  CALM: styles.calmCard,
+  NEUTRAL: styles.neutralCard,
+};
+
 const formatDateLocal = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -31,8 +40,16 @@ const formatDateLocal = (date: Date) => {
     return `${year}-${month}-${day}`;
 };
 
-const EmotionCalendar = ({selectedDate, onDateChange, calendarData,}: Props) => {
+const EmotionCalendar = ({
+    selectedDate, 
+    onDateChange, 
+    calendarData,
+}: Props) => {
     
+    const selectedPreview = calendarData.find(
+        (item) => item.date === formatDateLocal(selectedDate)
+    );
+
     return(
         <div className={styles.calendarWrapper}>
             <Calendar
@@ -56,11 +73,43 @@ const EmotionCalendar = ({selectedDate, onDateChange, calendarData,}: Props) => 
                                     ? emotionStickerMap[diary.topEmotion] ?? ""
                                     : ""}
                             </div>
-                            <div className={styles.previewText}>{diary.preview}</div>
                         </div>
                     );
                 }}
             />
+
+            {selectedPreview ? (
+            <div
+                className={`${styles.previewBox} ${
+                selectedPreview.topEmotion
+                    ? emotionStyleMap[selectedPreview.topEmotion]
+                    : styles.neutralCard
+                }`}
+            >
+                <div className={styles.previewHeader}>
+                <div className={styles.previewHeaderLeft}>
+                    <div className={styles.previewEmoji}>
+                    {selectedPreview.topEmotion
+                        ? emotionStickerMap[selectedPreview.topEmotion] ?? "📝"
+                        : "📝"}
+                    </div>
+
+                    <div className={styles.previewDateGroup}>
+                    <span className={styles.previewLabel}>Diary Preview</span>
+                    <span className={styles.previewDate}>{selectedPreview.date}</span>
+                    </div>
+                </div>
+
+                <div className={styles.previewBadge}>선택한 날짜</div>
+                </div>
+
+                <div className={styles.previewText}>{selectedPreview.preview}</div>
+            </div>
+            ) : (
+            <div className={`${styles.previewBox} ${styles.neutralCard}`}>
+                <div className={styles.emptyText}>이 날짜에는 작성된 일기가 없어요.</div>
+            </div>
+            )}
         </div>
     );
 };

@@ -11,6 +11,32 @@
   width: min(1200px, 92%);
   margin: 0 auto;
   padding: 40px 0 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* 공통 섹션 헤더 */
+.sectionHeader,
+.musicHeader,
+.calendarHeader {
+  margin-bottom: 16px;
+}
+
+.sectionTitle,
+.calendarTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #222;
+  margin: 0 0 8px;
+}
+
+.sectionDesc,
+.calendarDesc {
+  color: #777;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* 상단 소개 카드 */
@@ -20,7 +46,6 @@
   gap: 24px;
   align-items: stretch;
   margin-top: 28px;
-  margin-bottom: 32px;
 }
 
 .heroText {
@@ -81,26 +106,56 @@
   box-shadow: 0 14px 28px rgba(255, 122, 158, 0.35);
 }
 
+/* 음악 추천 섹션 */
+.musicSection {
+  margin-top: -4px;
+}
+
+.musicCard {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #f0e8eb;
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
+}
+
+.musicMoodBox {
+  margin-bottom: 20px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff8fb 0%, #fff1f6 100%);
+  border: 1px solid rgba(255, 210, 225, 0.72);
+}
+
+.musicBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 127, 164, 0.12);
+  color: #d95a84;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.musicMoodTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #2f2328;
+}
+
+.musicMoodDesc {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  color: #7d6871;
+  line-height: 1.65;
+}
+
 /* 차트 영역 */
 .chartSection {
-  margin-top: 8px;
-}
-
-.sectionHeader {
-  margin-bottom: 16px;
-}
-
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #222;
-  margin-bottom: 8px;
-}
-
-.sectionDesc {
-  color: #777;
-  font-size: 0.98rem;
-  line-height: 1.6;
+  margin-top: 0;
 }
 
 .chartCard {
@@ -111,6 +166,32 @@
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
 }
 
+/* 달력 영역 */
+.calendarSection {
+  margin-top: 0;
+}
+
+.calendarCard {
+  width: 100%;
+  max-width: 720px;
+  padding: 26px 28px;
+  border-radius: 32px;
+  border: 1px solid rgba(255, 182, 202, 0.35);
+  background: linear-gradient(180deg, #fffefe 0%, #fff7fa 100%);
+  box-shadow:
+    0 18px 40px rgba(255, 154, 178, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* calendarSection도 mainContent 내부에서 자연 정렬 */
+.calendarHeader {
+  max-width: 720px;
+}
+
+.calendarCard {
+  margin: 0;
+}
+
 /* 반응형 */
 @media (max-width: 900px) {
   .heroCard {
@@ -118,8 +199,9 @@
   }
 
   .heroText,
-  .previewCard,
-  .chartCard {
+  .musicCard,
+  .chartCard,
+  .calendarCard {
     padding: 22px;
   }
 
@@ -132,6 +214,7 @@
   .mainContent {
     width: 94%;
     padding: 24px 0 56px;
+    gap: 24px;
   }
 
   .writeTitle {
@@ -139,59 +222,18 @@
   }
 
   .description,
-  .sectionDesc {
+  .sectionDesc,
+  .calendarDesc,
+  .musicMoodDesc {
     font-size: 0.94rem;
   }
 
   .writeButton {
     width: 100%;
   }
-}
 
-/* 달력 디자인 */
-
-.calendarSection {
-  margin-top: -20px;
-  margin-left: -240px;
-  width: 100%;
-}
-
-.calendarHeader {
-  max-width: 720px;
-  margin: 0 auto 18px;
-}
-
-.calendarTitle {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 800;
-  color: #2d2d2d;
-}
-
-.calendarDesc {
-  margin: 8px 0 0;
-  font-size: 15px;
-  color: #8a7a82;
-  line-height: 1.6;
-}
-
-/* 달력 카드 */
-
-.calendarCard {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 26px 28px;
-
-  border-radius: 32px;
-  border: 1px solid rgba(255, 182, 202, 0.35);
-
-  background: linear-gradient(
-    180deg,
-    #fffefe 0%,
-    #fff7fa 100%
-  );
-
-  box-shadow:
-    0 18px 40px rgba(255, 154, 178, 0.10),
-    inset 0 1px 0 rgba(255,255,255,0.9);
+  .musicMoodBox {
+    padding: 16px;
+    border-radius: 18px;
+  }
 }

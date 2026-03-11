@@ -14,8 +14,22 @@ export interface DiaryAnalyzeRequest {
 }
 
 export interface TodayDiaryPreviewResponse {
+  diaryId: number | null;
   content: string;
   stickers: string[];
+}
+
+export interface YoutubeVideoItem {
+  videoId: string;
+  title: string;
+  channelTitle: string;
+  thumbnailUrl: string;
+}
+
+export interface MusicRecommendationResponse {
+  moodTitle: string;
+  moodDesc: string;
+  videos: YoutubeVideoItem[];
 }
 
 export const analyzeDiary = async (data: DiaryAnalyzeRequest) => {
@@ -38,4 +52,11 @@ export const getMonthlyCalendar = async (year: number, month: number) => {
   return await api.get("/diary/calendar", {
     params: { year, month },
   });
+};
+
+export const getRecommendedMusic = async (
+  diaryId: number,
+): Promise<MusicRecommendationResponse> => {
+  const response = await api.get(`/diary/${diaryId}/music`);
+  return response.data;
 };

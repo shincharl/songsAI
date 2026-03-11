@@ -24,6 +24,8 @@ public class DiaryService {
   private final EmotionLogRepository emotionLogRepository;
   private final EmotionAnalysisService emotionAnalysisService;
   private final DiaryStickerRepository diaryStickerRepository;
+  private final AiMusicQueryService aiMusicQueryService;
+  private final YoutubeService youtubeService;
 
   public Diary saveAndAnalyze(User user, DiaryAnalyzeRequest request) {
 
@@ -122,11 +124,12 @@ public class DiaryService {
             .toList();
 
           return new TodayDiaryPreviewResponse(
+            diary.getId(),
             diary.getContent(),
             stickers
           );
         })
-        .orElse(new TodayDiaryPreviewResponse("", List.of()));
+        .orElse(new TodayDiaryPreviewResponse(null, "", List.of()));
   }
   
   // 캘린더 날짜별로 묶어서 일기 정보 내보내기
@@ -160,5 +163,28 @@ public class DiaryService {
         );
       })
       .toList();
+  }
+
+  public MusicRecommendationResponse getRecommendedMusic(User user, Long diaryId){
+      Diary diary = diaryRepository.findById(diaryId)
+        .orElseThrow(() -> new IllegalArgumentException("익기를 찾을 수 없습니다."));
+
+      if (!diary.getUser().getId().equals(user.getId())){
+        throw new IllegalStateException("해당 일기에 접근할 수 없습니다.");
+      }
+
+      String diaryContent = diary.getContent();
+
+      String searchQuery = aiMusicQueryService.createYoutubeSearchQuery(diary.getContent());
+      List<YoutubeVideoItemResponse> videos = youtubeService.searchVideos(searchQuery);
+
+      String moodTitle = "AI가 고른 오늘의 무드";
+      String moodDesc = "'" + searchQuery + "' 검색어로 찾은 추천 음악이에요.'";
+
+    return new MusicRecommendationResponse(
+        moodTitle,
+        moodDesc,
+        videos
+      );
   }
 }
