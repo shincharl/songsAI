@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MusicQueryRequest {
+public class MusicMessageRequest {
   private String content;
 }

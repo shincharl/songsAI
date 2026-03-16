@@ -7,7 +7,7 @@ import { getMonthlyCalendar, getRecommendedMusic, getTodayDiaryPreview, getWeekl
 import DiaryPreviewCard from "../../components/Diary/DiaryPreviewCard";
 import EmotionCalendar from "../../components/Diary/EmotionCalendar";
 import RecommendedMusicPlayer from "../../components/Diary/RecommendedMusicPlayer";
-
+import FloatingPlayList from "../../components/Diary/FloatingPlaylist";
 
 interface DiaryCalendarItem {
   diaryId: number;
@@ -37,6 +37,8 @@ const EmotionDiaryPage = () => {
   const [musicMoodDesc, setMusicMoodDesc] = useState("");
   const [musicLoading, setMusicLoading] = useState(true);
 
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+
   useEffect(() => {
     document.body.style.overflow = openModal ? "hidden" : "auto";
 
@@ -60,6 +62,7 @@ const EmotionDiaryPage = () => {
         setMusicVideos([]);
         setMusicMoodTitle("");
         setMusicMoodDesc("");
+        setSelectedVideoId(null);
         setMusicLoading(false);
         return;
       }
@@ -71,14 +74,18 @@ const EmotionDiaryPage = () => {
         const data = await getRecommendedMusic(todayDiaryId);
         console.log("추천 음악 응답:", data);
 
-        setMusicVideos(data.videos || []);
+        const videos = data.videos || [];
+
+        setMusicVideos(videos);
         setMusicMoodTitle(data.moodTitle || "");
         setMusicMoodDesc(data.moodDesc || "");
+        setSelectedVideoId(videos[0]?.videoId ?? null);
       } catch (error) {
         console.error("추천 음악 조회 실패:", error);
         setMusicVideos([]);
         setMusicMoodTitle("");
         setMusicMoodDesc("");
+        setSelectedVideoId(null);
       }finally {
         setMusicLoading(false);
       }
@@ -184,7 +191,7 @@ const EmotionDiaryPage = () => {
             <div className={styles.musicMoodBox}>
               <span className={styles.musicBadge}>AI 추천</span>
               <h4 className={styles.musicMoodTitle}>
-                오늘의 무드: {musicMoodTitle || "추천 준비 중"}
+                {musicMoodTitle || "추천 준비 중"}
               </h4>
               <p className={styles.musicMoodDesc}>
                 {musicMoodDesc || "오늘 일기를 바탕으로 어울리는 음악을 추천하고 있어요."}
@@ -196,6 +203,8 @@ const EmotionDiaryPage = () => {
             ) : (
               <RecommendedMusicPlayer
               videos={musicVideos}
+              selectedVideoId={selectedVideoId}
+              onSelectVideo={setSelectedVideoId}
               title="추천 플레이리스트"
               subtitle="지금 감정과 잘 어울리는 영상 5개를 골라봤어요."
               />
@@ -242,6 +251,18 @@ const EmotionDiaryPage = () => {
       </section>
 
       </main>
+
+      <FloatingPlayList
+        videos={musicVideos.map((video, index) => ({
+          id: video.videoId ?? String(index),
+          title: video.title,
+          channelTitle: video.channelTitle,
+          thumbnailUrl:video.thumbnailUrl,
+        }))}
+        onVideoClick={(video) => {
+          setSelectedVideoId(video.id);
+        }}
+      />
 
       {openModal && (
         <WriteDiaryModal onClose={() => setOpenModal(false)} />

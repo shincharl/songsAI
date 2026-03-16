@@ -26,6 +26,11 @@ public class Diary {
   @Column(columnDefinition = "TEXT")
   private String content;
 
+  @Column(columnDefinition = "TEXT")
+  private String musicMessage;
+
+  private String musicQuery;
+
   @Column(updatable = false)
   private LocalDateTime createdAt;
 
@@ -57,6 +62,15 @@ public class Diary {
   * */
   public void updateContent(String content) {
     this.content = content;
+  }
+
+  public void updateMusicRecommendation(String musicMessage, String musicQuery){
+    this.musicMessage = musicMessage;
+    this.musicQuery = musicQuery;
+  }
+
+  public boolean hasMusicRecommendation() {
+    return musicMessage != null && !musicMessage.isBlank();
   }
 
 }

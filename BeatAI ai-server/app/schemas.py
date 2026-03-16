@@ -7,8 +7,8 @@ class AnalyzeRequest(BaseModel):
 class AnalyzeResponse(BaseModel):
     scores: Dict[str, float]
 
-class MusicQueryRequest(BaseModel):
+class MusicMessageRequest(BaseModel):
     content: str
 
-class MusicQueryResponse(BaseModel):
-    query: str
+class MusicMessageResponse(BaseModel):
+    message: str

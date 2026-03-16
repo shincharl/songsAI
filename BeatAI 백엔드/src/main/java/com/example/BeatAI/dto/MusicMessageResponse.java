@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MusicQueryResponse {
-  private String query;
+public class MusicMessageResponse {
+  private String message;
 }

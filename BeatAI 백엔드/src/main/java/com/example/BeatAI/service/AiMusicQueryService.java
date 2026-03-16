@@ -1,5 +1,5 @@
 package com.example.BeatAI.service;
 
 public interface AiMusicQueryService {
-  String createYoutubeSearchQuery(String diaryContent);
+  String createMusicMessage(String diaryContent);
 }

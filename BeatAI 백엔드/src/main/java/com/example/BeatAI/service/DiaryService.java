@@ -5,12 +5,14 @@ import com.example.BeatAI.entity.*;
 import com.example.BeatAI.repository.DiaryRepository;
 import com.example.BeatAI.repository.DiaryStickerRepository;
 import com.example.BeatAI.repository.EmotionLogRepository;
+import com.example.BeatAI.repository.RecommendedVideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ public class DiaryService {
   private final DiaryStickerRepository diaryStickerRepository;
   private final AiMusicQueryService aiMusicQueryService;
   private final YoutubeService youtubeService;
+  private final RecommendedVideoRepository recommendedVideoRepository;
 
   public Diary saveAndAnalyze(User user, DiaryAnalyzeRequest request) {
 
@@ -76,6 +79,40 @@ public class DiaryService {
 
       diaryStickerRepository.saveAll(stickers);
     }
+
+    // 추천 음악이 아직 없을 때만 생성
+    if(!saved.hasMusicRecommendation()){
+      try {
+        String musicMessage = aiMusicQueryService.createMusicMessage(content);
+        String musicQuery = youtubeService.createSearchQueryFromMessage(musicMessage);
+        List<YoutubeVideoItemResponse> videos = youtubeService.searchVideos(musicQuery);
+
+        saved.updateMusicRecommendation(musicMessage, musicQuery);
+
+        recommendedVideoRepository.deleteByDiary(saved);
+
+        List<RecommendedVideo> recommendedVideos = new ArrayList<>();
+        for (int i = 0; i < videos.size(); i++) {
+          YoutubeVideoItemResponse video = videos.get(i);
+
+          recommendedVideos.add(
+            RecommendedVideo.create(
+              saved,
+              video.getVideoId(),
+              video.getTitle(),
+              video.getChannelTitle(),
+              video.getThumbnailUrl(),
+              i + 1
+            )
+          );
+        }
+
+        recommendedVideoRepository.saveAll(recommendedVideos);
+      } catch (Exception e) {
+        System.out.println("추천 음악 저장 실패: " + e.getMessage());
+      }
+    }
+
     return saved;
   }
 
@@ -167,24 +204,32 @@ public class DiaryService {
 
   public MusicRecommendationResponse getRecommendedMusic(User user, Long diaryId){
       Diary diary = diaryRepository.findById(diaryId)
-        .orElseThrow(() -> new IllegalArgumentException("익기를 찾을 수 없습니다."));
+        .orElseThrow(() -> new IllegalArgumentException("일기를 찾을 수 없습니다."));
 
       if (!diary.getUser().getId().equals(user.getId())){
         throw new IllegalStateException("해당 일기에 접근할 수 없습니다.");
       }
 
-      String diaryContent = diary.getContent();
+    List<RecommendedVideo> savedVideos = recommendedVideoRepository.findByDiaryOrderBySortOrderAsc(diary);
 
-      String searchQuery = aiMusicQueryService.createYoutubeSearchQuery(diary.getContent());
-      List<YoutubeVideoItemResponse> videos = youtubeService.searchVideos(searchQuery);
+    List<YoutubeVideoItemResponse> videos = savedVideos.stream()
+      .map(video -> new YoutubeVideoItemResponse(
+        video.getVideoId(),
+        video.getTitle(),
+        video.getChannelTitle(),
+        video.getThumbnailUrl()
+      ))
+      .toList();
 
-      String moodTitle = "AI가 고른 오늘의 무드";
-      String moodDesc = "'" + searchQuery + "' 검색어로 찾은 추천 음악이에요.'";
+    String moodTitle = "AI가 고른 오늘의 무드";
+    String moodDesc = diary.getMusicMessage() != null && !diary.getMusicMessage().isBlank()
+      ? diary.getMusicMessage()
+      : "오늘 마음에 어울리는 노래를 골라봤어";
 
     return new MusicRecommendationResponse(
-        moodTitle,
-        moodDesc,
-        videos
-      );
+      moodTitle,
+      moodDesc,
+      videos
+    );
   }
 }

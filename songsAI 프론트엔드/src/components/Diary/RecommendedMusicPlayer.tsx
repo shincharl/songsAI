@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import styles from "../../styles/RecommendedMusicPlayer.module.css";
 
 export interface YoutubeVideoItem {
@@ -12,16 +12,19 @@ export interface YoutubeVideoItem {
 
 interface Props {
   videos: YoutubeVideoItem[];
+  selectedVideoId?: string | null;
+  onSelectVideo?: (videoId: string) => void;
   title?: string;
   subtitle?: string;
 }
 
 const RecommendedMusicPlayer = ({
   videos,
+  selectedVideoId,
+  onSelectVideo,
   title = "오늘의 추천 음악",
   subtitle = "감정 분석 결과를 바탕으로 추천된 영상이에요.",
 }: Props) => {
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
   const selectedVideo = useMemo(() => {
     if (videos.length === 0) return null;
@@ -76,7 +79,7 @@ const RecommendedMusicPlayer = ({
                     className={`${styles.videoItem} ${
                       isActive ? styles.activeItem : ""
                     }`}
-                    onClick={() => setSelectedVideoId(video.videoId)}
+                    onClick={() => onSelectVideo?.(video.videoId)}
                   >
                     <div className={styles.rank}>{index + 1}</div>
 
