@@ -32,6 +32,18 @@ export interface MusicRecommendationResponse {
   videos: YoutubeVideoItem[];
 }
 
+export interface WeeklyEmotionPoint {
+  day: string;
+  score: number;
+  emoji?: string;
+  label?: string;
+  date: string;
+}
+
+export interface WeeklyInsightResponse {
+  insight: string;
+}
+
 export const analyzeDiary = async (data: DiaryAnalyzeRequest) => {
   const response = await api.post("/diary/analyze", data);
   return response.data;
@@ -58,5 +70,15 @@ export const getRecommendedMusic = async (
   diaryId: number,
 ): Promise<MusicRecommendationResponse> => {
   const response = await api.get(`/diary/${diaryId}/music`);
+  return response.data;
+};
+
+export const getDayEmotionTrend = async (): Promise<WeeklyEmotionPoint[]> => {
+  const response = await api.get("/diary/weekly-trend");
+  return response.data;
+};
+
+export const getWeeklyInsight = async (): Promise<WeeklyInsightResponse> => {
+  const response = await api.get("/diary/weekly-insight");
   return response.data;
 };

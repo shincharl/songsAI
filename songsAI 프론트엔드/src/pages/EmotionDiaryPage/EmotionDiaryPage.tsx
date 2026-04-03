@@ -3,11 +3,12 @@ import DiaryBanner from "../../components/Diary/DiaryBanner";
 import styles from "../../styles/EmotionDiaryPage.module.css";
 import WriteDiaryModal from "../../components/Diary/WriteDiaryModal";
 import WeeklyEmotionChart from "../../components/Diary/WeeklyEmotionChart";
-import { getMonthlyCalendar, getRecommendedMusic, getTodayDiaryPreview, getWeeklyEmotions, type YoutubeVideoItem } from "../../api/diary";
+import { getMonthlyCalendar, getRecommendedMusic, getTodayDiaryPreview, getWeeklyEmotions, getDayEmotionTrend, type YoutubeVideoItem, type WeeklyEmotionPoint, getWeeklyInsight } from "../../api/diary";
 import DiaryPreviewCard from "../../components/Diary/DiaryPreviewCard";
 import EmotionCalendar from "../../components/Diary/EmotionCalendar";
 import RecommendedMusicPlayer from "../../components/Diary/RecommendedMusicPlayer";
 import FloatingPlayList from "../../components/Diary/FloatingPlaylist";
+import DayEmotionChart from "../../components/Diary/DayEmotionChart";
 
 interface DiaryCalendarItem {
   diaryId: number;
@@ -39,6 +40,15 @@ const EmotionDiaryPage = () => {
 
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
+  const [dayEmotionData, setDayEmotionData] = useState<WeeklyEmotionPoint[]>([]);
+  const [dayEmotionLoading, setDayEmotionLoading] = useState(true);
+
+  const [isOpen, setIsOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+
+  const [weeklyInsight, setWeeklyInsight] = useState("감정 흐름을 분석 중이에요...");
+
   useEffect(() => {
     document.body.style.overflow = openModal ? "hidden" : "auto";
 
@@ -50,6 +60,8 @@ const EmotionDiaryPage = () => {
   useEffect(() => {
     fetchWeeklyEmotionData();
     fetchTodayDiaryPreview();
+    fetchDayEmotionTrend();
+    fetchWeeklyInsight();
   }, []);
 
   useEffect(() => {
@@ -93,6 +105,16 @@ const EmotionDiaryPage = () => {
 
     fetchMusicRecommendation();
   }, [todayDiaryId]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // 주간 감정 데이터 조회 fetch
   const fetchWeeklyEmotionData = async() => {
@@ -144,6 +166,31 @@ const EmotionDiaryPage = () => {
       setCalendarData([]);
     } finally {
       setCalendarLoading(false);
+    }
+  };
+
+  // 7일 감정 데이터 추출
+  const fetchDayEmotionTrend = async () => {
+    try {
+      setDayEmotionLoading(true);
+      const data = await getDayEmotionTrend();
+      setDayEmotionData(data);
+    } catch (error) {
+      console.log("7일 감정 추이 조회 실패:", error);
+      setDayEmotionData([]);
+    } finally {
+      setDayEmotionLoading(false);
+    }
+  }
+
+  // 7일 감정 데이터 AI 분석 데이터 추가
+  const fetchWeeklyInsight = async () => {
+    try {
+      const data = await getWeeklyInsight();
+      setWeeklyInsight(data.insight);
+    } catch (error) {
+      console.error("주간 인사이트 조회 실패:", error);
+      setWeeklyInsight("최근 감정 흐름을 차분히 살펴봤어요.");
     }
   };
 
@@ -214,7 +261,7 @@ const EmotionDiaryPage = () => {
 
         <section className={styles.chartSection}>
           <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>이번 주 감정 한눈에 보기</h3>
+            <h3 className={styles.sectionTitle}> 감정 한눈에 보기</h3>
             <p className={styles.sectionDesc}>
               최근 감정 분포를 그래프로 확인해보세요.
             </p>
@@ -237,7 +284,8 @@ const EmotionDiaryPage = () => {
             </p>
           </div>
 
-          <div className={styles.calendarCard}>
+          <div className={styles.calendarWrapper}>
+            <div className={styles.calendarCard}>
            {calendarLoading ? (
             <p>달력 불러오는 중...</p>
            ) : (
@@ -248,21 +296,55 @@ const EmotionDiaryPage = () => {
             />
            )}
         </div>
-      </section>
 
+        <div className={styles.dayChartCard}>
+          {dayEmotionLoading ? (
+            <p>7일 감정 그래프 불러오는 중...</p>
+          ):(
+            <DayEmotionChart
+              data={dayEmotionData}
+              insight={weeklyInsight}
+            />
+          )}
+        </div>
+          </div>
+
+      </section>
       </main>
 
-      <FloatingPlayList
-        videos={musicVideos.map((video, index) => ({
-          id: video.videoId ?? String(index),
-          title: video.title,
-          channelTitle: video.channelTitle,
-          thumbnailUrl:video.thumbnailUrl,
-        }))}
-        onVideoClick={(video) => {
-          setSelectedVideoId(video.id);
-        }}
-      />
+      {(isMobile || !isOpen) && (
+        <button
+          className={styles.floatingButton}
+          onClick={() => setIsOpen(true)}
+        >
+          🎵
+        </button>
+      )}
+
+      {isOpen && !isMobile && (
+        <div className={styles.playlistWrapper}>
+          <button
+            className={styles.closeBtn}
+            onClick={() => setIsOpen(false)}
+          >
+            ✖
+          </button>
+
+          <div className={styles.playlistScroll}>
+              <FloatingPlayList
+                videos={musicVideos.map((video, index) => ({
+                  id: video.videoId ?? String(index),
+                  title: video.title,
+                  channelTitle: video.channelTitle,
+                  thumbnailUrl:video.thumbnailUrl,
+                }))}
+                onVideoClick={(video) => {
+                  setSelectedVideoId(video.id);
+                }}
+              />
+          </div>
+        </div>
+      )}
 
       {openModal && (
         <WriteDiaryModal onClose={() => setOpenModal(false)} />

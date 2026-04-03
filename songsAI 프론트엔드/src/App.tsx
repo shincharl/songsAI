@@ -6,6 +6,7 @@ import LocalSignup from "./pages/Login/LocalSignup";
 import Register from "./pages/Login/Register";
 import SetFirstNickname from "./pages/Login/SetFitstNickname";
 import EmotionDiaryPage from "./pages/EmotionDiaryPage/EmotionDiaryPage";
+import DiaryHistoryPage from "./pages/HistoryPage/DiaryHistoryPage";
 
 const App = () => {
     return(
@@ -16,6 +17,7 @@ const App = () => {
                     <Route element={<Layout/>}>
                         <Route path="/" element={<Home />}/>
                         <Route path="EmotionDiaryPage" element={<EmotionDiaryPage/>}/>
+                        <Route path="DiaryHistoryPage" element={<DiaryHistoryPage/>}/>
                     </Route>
 
                     {/* Layout 적용되지 않는 페이지 */}

@@ -1,10 +1,7 @@
 package com.example.BeatAI.controller;
 
 import com.example.BeatAI.config.UserPrincipal;
-import com.example.BeatAI.dto.DiaryAnalyzeRequest;
-import com.example.BeatAI.dto.DiaryCalendarResponse;
-import com.example.BeatAI.dto.MusicRecommendationResponse;
-import com.example.BeatAI.dto.WeeklyEmotionResponse;
+import com.example.BeatAI.dto.*;
 import com.example.BeatAI.entity.Diary;
 import com.example.BeatAI.entity.User;
 import com.example.BeatAI.service.DiaryService;
@@ -79,6 +76,24 @@ public class DiaryController {
     @PathVariable Long diaryId
   ) {
     return diaryService.getRecommendedMusic(userPrincipal.getUser(), diaryId);
+  }
+  
+  // 7일 감정 그래프 내용 가져오기
+  @GetMapping("/weekly-trend")
+  public ResponseEntity<List<DayEmotionTrendResponse>> getWeeklyTrend(
+    @AuthenticationPrincipal UserPrincipal userPrincipal
+  ){
+    User user = userPrincipal.getUser();
+    return ResponseEntity.ok(diaryService.getWeeklyEmotionTrend(user));
+  }
+
+  // AI 한테 7일 감정 비교해달라고 하기
+  @GetMapping("/weekly-insight")
+  public ResponseEntity<WeeklyInsightResponse> getWeeklyInsight(
+    @AuthenticationPrincipal UserPrincipal userPrincipal
+  ){
+    User user = userPrincipal.getUser();
+    return ResponseEntity.ok(diaryService.getWeeklyInsight(user));
   }
 
 }

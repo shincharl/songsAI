@@ -1,7 +1,15 @@
 from fastapi import FastAPI
-from app.schemas import AnalyzeRequest, AnalyzeResponse, MusicMessageRequest, MusicMessageResponse
+from app.schemas import (
+    AnalyzeRequest, 
+    AnalyzeResponse, 
+    MusicMessageRequest, 
+    MusicMessageResponse,
+    WeeklyInsightRequest,
+    WeeklyInsightResponse,
+    )
 from app.services.emotion_service import analyze_emotion
 from app.services.music_query_service import create_comfort_message
+from app.services.weekly_insight_service import create_weekly_insight
 
 app = FastAPI()
 
@@ -13,3 +21,8 @@ def analyze(req: AnalyzeRequest):
 def music_query(req: MusicMessageRequest):
     message = create_comfort_message(req.content)
     return {"message": message}
+
+@app.post("/weekly-insight", response_model=WeeklyInsightResponse)
+def weekly_insight(req: WeeklyInsightRequest):
+    insight = create_weekly_insight(req.emotions)
+    return {"insight": insight}

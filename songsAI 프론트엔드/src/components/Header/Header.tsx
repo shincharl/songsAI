@@ -11,7 +11,7 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const tabs = ["감정 일기", "친구 추천", "플레이리스트", "커뮤니티"]
+    const tabs = ["감정 일기", "일기 히스토리", "플레이리스트", "커뮤니티"]
 
     return(
         <header className={styles.header}>
@@ -32,6 +32,7 @@ const Header = () => {
                             onClick={() => {
                                 setActiveTab(tab);
                                 if (tab === "감정 일기") navigate("/EmotionDiaryPage");
+                                if (tab === "일기 히스토리") navigate("/DiaryHistoryPage");
                             }}
                             className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
                         >

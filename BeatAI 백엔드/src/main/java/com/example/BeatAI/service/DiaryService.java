@@ -7,15 +7,14 @@ import com.example.BeatAI.repository.DiaryStickerRepository;
 import com.example.BeatAI.repository.EmotionLogRepository;
 import com.example.BeatAI.repository.RecommendedVideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -231,5 +230,134 @@ public class DiaryService {
       moodDesc,
       videos
     );
+  }
+
+  @Transactional(readOnly = true)
+  public List<DayEmotionTrendResponse> getWeeklyEmotionTrend(User user){
+
+    LocalDate today = LocalDate.now();
+    LocalDate startDate = today.minusDays(6);
+
+    LocalDateTime start = startDate.atStartOfDay();
+    LocalDateTime end = today.plusDays(1).atStartOfDay();
+    
+    // 최근 7일 일기 조회
+    List<Diary> diaries = diaryRepository
+      .findAllByUserAndCreatedAtBetweenOrderByCreatedAtAsc(user, start, end);
+
+    // 날짜별로 매핑 (중복 방지)
+    Map<LocalDate, Diary> diaryMap = diaries.stream()
+      .collect(Collectors.toMap(
+          d -> d.getCreatedAt().toLocalDate(),
+          d -> d
+      ));
+
+    List<DayEmotionTrendResponse> result = new ArrayList<>();
+
+    // 7일 루프 (빈 날짜도 채움)
+    for (int i = 0; i < 7; i++) {
+      LocalDate date = startDate.plusDays(i);
+
+      Diary diary = diaryMap.get(date);
+      
+      if (diary == null) {
+        // 일기 없는 날
+        result.add(new DayEmotionTrendResponse(
+          getKorDayOfWeek(date),
+          3.0,
+          "🙂",
+          "기록 없음",
+          date.toString()
+        ));
+        continue;
+      }
+
+      // 해당 diary의 최고 감정
+      Optional<EmotionLog> topEmotionLogOpt =
+        emotionLogRepository.findTopByDiaryOrderByScoreDesc(diary);
+
+      if (topEmotionLogOpt.isEmpty()){
+        result.add(new DayEmotionTrendResponse(
+          getKorDayOfWeek(date),
+          3.0,
+          "🙂",
+          "보통",
+          date.toString()
+        ));
+        continue;
+      }
+
+      EmotionType emotion = topEmotionLogOpt.get().getEmotion();
+
+      result.add(new DayEmotionTrendResponse(
+        getKorDayOfWeek(date),
+        toChartScore(emotion),
+        toEmoji(emotion),
+        toLabel(emotion),
+        date.toString()
+      ));
+    }
+
+    return result;
+  }
+  
+  // 한국어 날짜 변환 메서드
+  private String getKorDayOfWeek(LocalDate date){
+    return switch (date.getDayOfWeek()) {
+      case MONDAY -> "월";
+      case TUESDAY -> "화";
+      case WEDNESDAY -> "수";
+      case THURSDAY -> "목";
+      case FRIDAY -> "금";
+      case SATURDAY -> "토";
+      case SUNDAY -> "일";
+    };
+  }
+  
+  // Emotion 변환 함수
+  private double toChartScore(EmotionType emotion){
+    return switch (emotion) {
+      case SAD -> 1.5;
+      case ANGRY -> 1.8;
+      case NEUTRAL -> 3.0;
+      case CALM -> 3.6;
+      case HAPPY -> 4.3;
+      case EXCITED -> 4.8;
+    };
+  }
+
+  private String toEmoji(EmotionType emotion){
+    return switch (emotion) {
+      case SAD -> "😢";
+      case ANGRY -> "😠";
+      case NEUTRAL -> "🙂";
+      case CALM -> "😌";
+      case HAPPY -> "😊";
+      case EXCITED -> "🤩";
+    };
+  }
+
+  private String toLabel(EmotionType emotion){
+    return switch (emotion) {
+      case SAD -> "슬픔";
+      case ANGRY -> "화남";
+      case NEUTRAL -> "보통";
+      case CALM -> "차분함";
+      case HAPPY -> "행복";
+      case EXCITED -> "신남";
+    };
+  }
+  
+  // AI 7일치 감정 상태 분석 및 따뜻한 한마디 가져오는 메서드
+  public WeeklyInsightResponse getWeeklyInsight(User user){
+    List<DayEmotionTrendResponse> trend = getWeeklyEmotionTrend(user);
+
+    if (trend == null || trend.isEmpty()){
+      return new WeeklyInsightResponse("최근 7일 감정 데이터가 아직 충분하지 않아요.");
+    }
+
+    String insight = aiMusicQueryService.generateWeeklyInsight(trend);
+
+    return new WeeklyInsightResponse(insight);
   }
 }

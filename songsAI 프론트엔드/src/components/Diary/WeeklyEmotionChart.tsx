@@ -31,7 +31,7 @@ const emotionEmojiMap: Record<string, string> = {
 
 const WeeklyEmotionChart = ({
     data, 
-    title = "AI가 분석한 이번 주 감정 비율 (한눈에 보기)",
+    title = "AI가 분석한 7일치 감정 비율 (한눈에 보기)",
 }: Props) => {
     const [animated, setAnimated] = useState(false);
 

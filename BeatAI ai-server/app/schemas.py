@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict
+from typing import Dict, List, Optional
 
 class AnalyzeRequest(BaseModel):
     text: str
@@ -12,3 +12,15 @@ class MusicMessageRequest(BaseModel):
 
 class MusicMessageResponse(BaseModel):
     message: str
+
+class EmotionPoint(BaseModel):
+    day: str
+    score: float
+    label: Optional[str] = None
+    emoji: Optional[str] = None
+
+class WeeklyInsightRequest(BaseModel):
+    emotions: List[EmotionPoint]
+
+class WeeklyInsightResponse(BaseModel):
+    insight: str
