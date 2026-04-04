@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DiaryRepository extends JpaRepository<Diary, Long> {
+public interface DiaryRepository extends JpaRepository<Diary, Long>, DiaryRepositoryCustom {
 
   // 오늘 작성한 일기 시간 범위 조회 메서드
   Optional<Diary> findFirstByUserAndCreatedAtBetween(User user, LocalDateTime start, LocalDateTime end);
@@ -25,4 +25,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     LocalDateTime start,
     LocalDateTime end
   );
+
+
 }

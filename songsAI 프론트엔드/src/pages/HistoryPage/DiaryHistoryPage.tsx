@@ -3,11 +3,24 @@ import styles from "../../styles/DiaryHistoryPage.module.css"
 import { getDiaryHistory } from "../../api/diaryHistory";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css"
+import DiarySearchBox from "../../components/DiaryHistory/DiarySearchBox";
+
+type DiaryHistoryItem = {
+    diaryId: number;
+    date: string;
+    topEmotion: string | null;
+    preview: string;
+};
 
 const DiaryHistoryPage = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [activeFilter, setActiveFilter] = useState("전체");
-    const [search, setSearch] = useState("");
+
+    // input에 바로 바인딩되는 값
+    const [searchInput, setSearchInput] = useState("");
+
+    // 실제 서버 조회에 사용하는 검색어
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -15,22 +28,12 @@ const DiaryHistoryPage = () => {
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
 
-    const [historyList, setHistoryList] = useState<any[]>([]);
+    const [historyList, setHistoryList] = useState<DiaryHistoryItem[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchHistory();
-    }, [selectedDate]);
-
-    const parseMonth = () => {
-        const [year, month] = selectedMonth
-            .replace("년", "")
-            .replace("월", "")
-            .split(" ")
-            .map(Number);
-
-            return {year, month};
-    }
+    }, [selectedDate, activeFilter, searchKeyword]);
 
     const fetchHistory = async () => {
         try {
@@ -39,7 +42,12 @@ const DiaryHistoryPage = () => {
             const year = selectedDate.getFullYear();
             const month = selectedDate.getMonth() + 1;
 
-            const data = await getDiaryHistory(year, month);
+            const data = await getDiaryHistory({
+                year,
+                month,
+                keyword: searchKeyword || null,
+                emotion: emotionMap[activeFilter],
+            });
 
             setHistoryList(data);
         } catch (error) {
@@ -50,6 +58,20 @@ const DiaryHistoryPage = () => {
     };
 
     const filters = ["전체", "기쁨", "슬픔", "화남", "설렘", "편안함", "보통"];
+
+    const emotionMap: Record<string, string | null> = {
+    전체: null,
+    기쁨: "HAPPY",
+    슬픔: "SAD",
+    화남: "ANGRY",
+    설렘: "EXCITED",
+    편안함: "CALM",
+    보통: "NEUTRAL",
+    };
+
+    const handleSearchSubmit = () => {
+        setSearchKeyword(searchInput);
+    };
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollRef.current) return;
@@ -122,15 +144,11 @@ const DiaryHistoryPage = () => {
 
                 {/* 오른쪽: 검색 */}
                 <div className={styles.rightSection}>
-                    <div className={styles.searchBox}>
-                        <input 
-                            type="text"
-                            placeholder="기록 검색하기"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                    <DiarySearchBox 
+                        value={searchInput} 
+                        onChange={setSearchInput}
+                        onSearch={handleSearchSubmit}
                         />
-                        <span className={styles.searchIcon}>🔍</span>
-                    </div>
                 </div>
             </div>
 
@@ -151,8 +169,6 @@ const DiaryHistoryPage = () => {
                 ))
             )}
         </div>
-            
-
         </div>
     )
 }
