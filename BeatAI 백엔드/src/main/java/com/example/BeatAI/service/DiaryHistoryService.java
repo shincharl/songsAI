@@ -1,5 +1,6 @@
 package com.example.BeatAI.service;
 
+import com.example.BeatAI.dto.DiaryHistoryDetailResponse;
 import com.example.BeatAI.dto.DiaryHistoryResponse;
 import com.example.BeatAI.dto.DiaryHistorySearchRequest;
 import com.example.BeatAI.entity.Diary;
@@ -21,6 +22,7 @@ import java.util.List;
 public class DiaryHistoryService {
 
   private final DiaryRepository diaryRepository;
+  private final EmotionLogRepository emotionLogRepository;
 
   public List<DiaryHistoryResponse> getHistory(User user, DiaryHistorySearchRequest request) {
     LocalDate firstDay = LocalDate.of(request.getYear(), request.getMonth(), 1);
@@ -29,4 +31,25 @@ public class DiaryHistoryService {
 
     return diaryRepository.searchHistory(user, start, end, request);
   }
+
+  public DiaryHistoryDetailResponse getDiaryDetail(User user, Long diaryId) {
+    Diary diary = diaryRepository.findByIdAndUser(diaryId, user)
+      .orElseThrow(() -> new RuntimeException("해당 일기를 찾을 수 없습니다."));
+
+    String topEmotion = emotionLogRepository.findTopByDiaryOrderByScoreDesc(diary)
+      .map(emotionLog -> emotionLog.getEmotion().name())
+      .orElse("NEUTRAL");
+
+    String date = diary.getCreatedAt()
+      .toLocalDate()
+      .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+
+      return new DiaryHistoryDetailResponse(
+        diary.getId(),
+        date,
+        topEmotion,
+        diary.getContent()
+      );
+  }
+
 }

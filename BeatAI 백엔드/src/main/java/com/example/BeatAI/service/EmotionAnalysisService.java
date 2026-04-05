@@ -18,8 +18,9 @@ public class EmotionAnalysisService {
 
   public EmotionAnalysisService(
     WebClient.Builder builder,
-    @Value("${ai.base-url:http://127.0.0.1:8000}") String aiBaseUrl
+    @Value("${ai.server.url}") String aiBaseUrl
     ) {
+    System.out.println("EmotionAnalysisService aiBaseUrl = " + aiBaseUrl);
     this.webClient = builder.baseUrl(aiBaseUrl).build();
   }
 
@@ -34,7 +35,7 @@ public class EmotionAnalysisService {
         .bodyValue(new AnalyzeRequestDto(text))
         .retrieve()
         .bodyToMono(AnalyzeResponseDto.class)
-        .timeout(Duration.ofSeconds(3))
+        .timeout(Duration.ofSeconds(17))
         .block();
 
       if(res == null || res.scores() == null){
@@ -51,6 +52,8 @@ public class EmotionAnalysisService {
 
     } catch (Exception e) {
       // AI 서버 죽었을 때 fallback
+      e.printStackTrace();
+      System.out.println("❌ AI analyze 호출 실패: " + e.getMessage());
       result.put(EmotionType.NEUTRAL, 1.0);
     }
 

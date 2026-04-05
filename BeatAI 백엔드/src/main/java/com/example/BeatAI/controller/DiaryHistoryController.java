@@ -1,6 +1,7 @@
 package com.example.BeatAI.controller;
 
 import com.example.BeatAI.config.UserPrincipal;
+import com.example.BeatAI.dto.DiaryHistoryDetailResponse;
 import com.example.BeatAI.dto.DiaryHistoryResponse;
 import com.example.BeatAI.dto.DiaryHistorySearchRequest;
 import com.example.BeatAI.entity.User;
@@ -25,5 +26,15 @@ public class DiaryHistoryController {
     @ModelAttribute DiaryHistorySearchRequest request
     ) {
     return diaryHistoryService.getHistory(userPrincipal.getUser(), request);
+  }
+
+  @GetMapping("/history/{diaryId}")
+  public ResponseEntity<DiaryHistoryDetailResponse> getDiaryDetail(
+    @PathVariable Long diaryId,
+    @AuthenticationPrincipal UserPrincipal userPrincipal
+  ) {
+    return ResponseEntity.ok(
+      diaryHistoryService.getDiaryDetail(userPrincipal.getUser(), diaryId)
+    );
   }
 }

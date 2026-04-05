@@ -7,7 +7,6 @@ import com.example.BeatAI.repository.DiaryStickerRepository;
 import com.example.BeatAI.repository.EmotionLogRepository;
 import com.example.BeatAI.repository.RecommendedVideoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -102,8 +102,8 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom {
     }
 
     String normalized = content.replace("\n", " ").trim();
-    return normalized.length() > 60
-      ? normalized.substring(0, 60) + "..."
+    return normalized.length() > 10
+      ? normalized.substring(0, 10) + "..."
       : normalized;
   }
 

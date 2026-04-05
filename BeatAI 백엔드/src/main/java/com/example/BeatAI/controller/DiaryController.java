@@ -25,10 +25,15 @@ public class DiaryController {
     @RequestBody DiaryAnalyzeRequest request,
     @AuthenticationPrincipal UserPrincipal userPrincipal
     ){
+    System.out.println("=== /api/diary/analyze 진입 ===");
+    System.out.println("request content = " + request.getContent());
+    System.out.println("userPrincipal = " + userPrincipal);
     Diary saved = diaryService.saveAndAnalyze(
       userPrincipal.getUser(),
       request
     );
+
+    System.out.println("saved diaryId = " + saved.getId());
 
     return ResponseEntity.ok(Map.of(
       "success", true,

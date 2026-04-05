@@ -7,6 +7,13 @@ export interface DiaryHistorySearchParams {
   emotion?: string | null;
 }
 
+export interface DiaryDetailResponse {
+  diaryId: number;
+  date: string;
+  topEmotion: string | null;
+  content: string;
+}
+
 export const getDiaryHistory = async ({
   year,
   month,
@@ -23,4 +30,9 @@ export const getDiaryHistory = async ({
   });
 
   return response.data;
+};
+
+export const getDiaryDetail = async (diaryId: number) => {
+  const response = await api.get(`/diary/history/${diaryId}`);
+  return response.data as DiaryDetailResponse;
 };

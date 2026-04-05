@@ -1,0 +1,27 @@
+services:
+  frontend:
+    build:
+      context: ./songsAI 프론트엔드
+    container_name: songsai-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./BeatAI 백엔드
+    container_name: songsai-backend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - ai
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+
+  ai:
+    build:
+      context: ./BeatAI ai-server
+    container_name: songsai-ai
+    ports:
+      - "8000:8000"

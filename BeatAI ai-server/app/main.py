@@ -15,7 +15,13 @@ app = FastAPI()
 
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest):
-    return {"scores": analyze_emotion(req.text)}
+    print("입력 텍스트 =", req.text)
+
+    result = analyze_emotion(req.text)
+
+    print("AI 감정 분석 결과 =", result)
+
+    return {"scores": result}
 
 @app.post("/music-message", response_model=MusicMessageResponse)
 def music_query(req: MusicMessageRequest):
