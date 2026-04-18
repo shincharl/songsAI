@@ -5,7 +5,7 @@ import re
 
 model = ChatOllama(
     model="llama3.2:3b",
-    base_url="http://host.docker.internal:11434",
+    # base_url="http://host.docker.internal:11434",
     temperature=0.3,
 )
 

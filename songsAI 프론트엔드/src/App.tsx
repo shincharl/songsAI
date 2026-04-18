@@ -7,6 +7,7 @@ import Register from "./pages/Login/Register";
 import SetFirstNickname from "./pages/Login/SetFitstNickname";
 import EmotionDiaryPage from "./pages/EmotionDiaryPage/EmotionDiaryPage";
 import DiaryHistoryPage from "./pages/HistoryPage/DiaryHistoryPage";
+import PlayListPage from "./pages/PlayListPage/PlayListPage";
 
 const App = () => {
     return(
@@ -18,6 +19,7 @@ const App = () => {
                         <Route path="/" element={<Home />}/>
                         <Route path="EmotionDiaryPage" element={<EmotionDiaryPage/>}/>
                         <Route path="DiaryHistoryPage" element={<DiaryHistoryPage/>}/>
+                        <Route path="PlayListPage" element={<PlayListPage/>}/>
                     </Route>
 
                     {/* Layout 적용되지 않는 페이지 */}
