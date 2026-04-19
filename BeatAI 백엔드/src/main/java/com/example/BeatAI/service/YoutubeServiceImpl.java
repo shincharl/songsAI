@@ -1,7 +1,6 @@
 package com.example.BeatAI.service;
 
 import com.example.BeatAI.dto.YoutubeVideoItemResponse;
-import com.example.BeatAI.dto.youtubesearch.YoutubeSearchItem;
 import com.example.BeatAI.dto.youtubesearch.YoutubeSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -24,13 +21,20 @@ public class YoutubeServiceImpl implements YoutubeService {
   private String apiKey;
 
   public List<YoutubeVideoItemResponse> searchVideosFromMessage(String message) {
-    String query = convertMessageToQuery(message);
-    query = normalizeQuery(query);
+    String baseQuery = normalizeQuery(convertMessageToQuery(message));
 
     System.out.println("message = " + message);
-    System.out.println("변환된 query = " + query);
+    System.out.println("baseQuery = " + baseQuery);
 
-    return searchVideos(query);
+    List<String> queries = buildDiverseQueries(baseQuery, message);
+    List<YoutubeVideoItemResponse> allVideos = new ArrayList<>();
+    
+    for (String query : queries) {
+      System.out.println("검색 query = " + query);
+      allVideos.addAll(searchVideos(query));
+    }
+
+    return deduplicateShuffleAndLimit(allVideos, 10);
   }
 
   @Override
@@ -51,7 +55,8 @@ public class YoutubeServiceImpl implements YoutubeService {
       .queryParam("part", "snippet")
       .queryParam("q", query)
       .queryParam("type", "video")
-      .queryParam("maxResults", 5)
+      .queryParam("maxResults", 10)
+      .queryParam("order", pickOne("relevance", "date", "viewCount"))
 //      .queryParam("videoCategoryId", "10")
 //      .queryParam("regionCode", "KR")
 //      .queryParam("relevanceLanguage", "ko")
@@ -224,5 +229,78 @@ public class YoutubeServiceImpl implements YoutubeService {
     }
 
     return false;
+  }
+
+  private List<String> buildDiverseQueries(String baseQuery, String message) {
+    Set<String> queries = new LinkedHashSet<>();
+
+    queries.add(baseQuery);
+    queries.add(baseQuery + " playlist");
+    queries.add(baseQuery + " 노래 모음");
+    queries.add(baseQuery + " 추천");
+    queries.add(baseQuery + " mix");
+
+    String text = message == null ? "" : message.toLowerCase();
+    
+    if (text.contains("밤") || text.contains("새벽")) {
+      queries.add("새벽에 듣기 좋은 " +  baseQuery);
+    }
+    
+    if (text.contains("비")) {
+      queries.add("비 오는 날 듣기 좋은" + baseQuery);
+    }
+
+    if (text.contains("공부") || text.contains("집중") || text.contains("작업") || text.contains("코딩")) {
+      queries.add("집중할 때 듣는 " + baseQuery);
+    }
+
+    if (text.contains("위로") || text.contains("힘든") || text.contains("지친")) {
+      queries.add("위로되는 " + baseQuery);
+    }
+
+    if (text.contains("신나") || text.contains("행복") || text.contains("기분 좋")) {
+      queries.add("기분 좋아지는 " + baseQuery);
+    }
+
+    return new ArrayList<>(queries);
+  }
+
+  private List<YoutubeVideoItemResponse> deduplicateShuffleAndLimit(
+    List<YoutubeVideoItemResponse> videos,
+    int limit
+  ){
+    Map<String, YoutubeVideoItemResponse> uniqueMap = new LinkedHashMap<>();
+
+    for(YoutubeVideoItemResponse video : videos){
+      if (video == null || video.getVideoId() == null || video.getVideoId().isBlank()){
+        continue;
+      }
+
+      uniqueMap.putIfAbsent(video.getVideoId(), video);
+    }
+
+    List<YoutubeVideoItemResponse> uniqueList = new ArrayList<>(uniqueMap.values());
+    Collections.shuffle(uniqueList);
+
+    Map<String, Integer> channelCount = new LinkedHashMap<>();
+    List<YoutubeVideoItemResponse> result = new ArrayList<>();
+
+    for (YoutubeVideoItemResponse video : uniqueList) {
+      String channel = video.getChannelTitle() == null ? "" : video.getChannelTitle();
+      int count = channelCount.getOrDefault(channel,0);
+
+      if (count > 2){
+        continue;
+      }
+
+      result.add(video);
+      channelCount.put(channel, count + 1);
+
+      if (result.size() >= limit){
+        break;
+      }
+    }
+
+    return result;
   }
 }
