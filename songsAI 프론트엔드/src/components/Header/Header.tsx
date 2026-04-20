@@ -34,6 +34,7 @@ const Header = () => {
                                 if (tab === "감정 일기") navigate("/EmotionDiaryPage");
                                 if (tab === "일기 히스토리") navigate("/DiaryHistoryPage");
                                 if (tab === "플레이리스트") navigate("/PlayListPage");
+                                if (tab === "커뮤니티") navigate("/CommunityPage");
                             }}
                             className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
                         >

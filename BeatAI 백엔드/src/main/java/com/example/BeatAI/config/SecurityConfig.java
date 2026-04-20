@@ -4,6 +4,7 @@ import com.example.BeatAI.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,14 @@ public class SecurityConfig {
       // h2-console 접근 허용
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/h2-console/**").permitAll()
+
+        // 커뮤니티 조회는 공개
+        .requestMatchers(HttpMethod.GET, "/api/community/posts").permitAll()
+
+        // 커뮤니티 작성/리액션은 로그인 필요
+        .requestMatchers(HttpMethod.POST, "/api/community/posts").authenticated()
+        .requestMatchers(HttpMethod.POST, "/api/community/posts/*/reactions").authenticated()
+
         .anyRequest().permitAll()
       );
     

@@ -1,0 +1,184 @@
+.page {
+  padding: 24px;
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+}
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filterButton {
+  border: 1px solid #d8dbe2;
+  background: #fff;
+  color: #444;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.filterButton:hover {
+  background: #f5f7fb;
+}
+
+.filterButtonActive {
+  background: #eef4ff;
+  border-color: #7aa7ff;
+  color: #2d5bba;
+  font-weight: 600;
+}
+
+.composer {
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 1px solid #e4e7ec;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  padding: 14px;
+  border: 1px solid #d8dbe2;
+  border-radius: 12px;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.textarea:focus {
+  border-color: #7aa7ff;
+}
+
+.composerFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.select {
+  min-width: 120px;
+  padding: 10px 12px;
+  border: 1px solid #d8dbe2;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.submitButton {
+  border: none;
+  background: #4d8dff;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.statusText {
+  color: #666;
+  font-size: 14px;
+}
+
+.postList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.postCard {
+  border: 1px solid #e4e7ec;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+}
+
+.postMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.nickname {
+  font-size: 15px;
+  color: #222;
+}
+
+.dot {
+  color: #999;
+}
+
+.emotionLabel {
+  font-size: 14px;
+  color: #667085;
+}
+
+.postContent {
+  margin-bottom: 14px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.reactionBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reactionButton {
+  border: 1px solid #d8dbe2;
+  background: #fff;
+  color: #444;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.reactionButton:hover {
+  background: #f7f8fa;
+}
+
+.reactionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.reactionActive {
+  background: #eef4ff;
+  border-color: #7aa7ff;
+  color: #2d5bba;
+  font-weight: 600;
+}
