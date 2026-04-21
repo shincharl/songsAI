@@ -10,6 +10,16 @@ export type CommunityEmotion =
 
 export type ReactionType = "EMPATHY" | "COMFORT" | "CHEER";
 
+export type CommunitySocketEvent =
+  | {
+      type: "NEW_POST";
+      data: CommunityPostResponse;
+    }
+  | {
+      type: "REACTION_UPDATED";
+      data: PostReactionResponse;
+    };
+
 export interface CommunityPostCreateRequest {
   content: string;
   emotion: CommunityEmotion;

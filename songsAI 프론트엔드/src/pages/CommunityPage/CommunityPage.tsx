@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Styles from "../../styles/CommunityPage.module.css"
-import { createCommunityPost, getCommunityPosts, reactToCommunityPost, type CommunityEmotion, type CommunityPostResponse, type ReactionType } from "../../api/community";
+import { createCommunityPost, getCommunityPosts, reactToCommunityPost, type CommunityEmotion, type CommunityPostResponse, type CommunitySocketEvent, type ReactionType } from "../../api/community";
 import { useAuthStore } from "../../store/useAuthStore";
+import { connectCommunitySocket, disconnectCommunitySocket } from "../../api/communitySocket";
 
 const emotionLabels: Record<CommunityEmotion, string> = {
     HAPPY: "기쁨",
@@ -33,24 +34,69 @@ const CommunityPage = () => {
     const [submitting, setSubmitting] = useState(false);
     const [reactingPostId, setReactingPostId] = useState<number | null>(null);
 
+    const [page, setPage] = useState(0);
+    const [hasNext, setHasNext] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    const observerRef = useRef<HTMLDivElement | null>(null);
+
     const accessToken = useAuthStore((state) => state.accessToken);
     const isLoggedIn = !!accessToken;
 
-    const fetchPosts = async () => {
+    const fetchInitialPosts = async () => {
         try {
             setLoading(true);
             const data = await getCommunityPosts({
                 emotion: selectedEmotion,
-                page:0,
+                page: 0,
                 size: 10,
             });
+
             setPosts(data.content);
+            setPage(0);
+            setHasNext(!data.last);
         } catch (error) {
             console.error("게시글 조회 실패", error);
         } finally {
             setLoading(false);
         }
     };
+
+    const fetchMorePosts = async () => {
+        if (loadingMore || loading || !hasNext) return;
+
+        console.log("추가 로딩 시작", {page, hasNext})
+
+        try {
+            setLoadingMore(true);
+
+            const nextPage = page + 1;
+            const data = await getCommunityPosts({
+                emotion: selectedEmotion,
+                page: nextPage,
+                size: 10,
+            });
+
+            console.log("추가 로딩 결과", data);
+
+            setPosts((prev) => {
+                const merged = [...prev, ...data.content];
+
+                return merged.filter(
+                    (post, index, arr) =>
+                        arr.findIndex((item) => item.id === post.id) === index,
+                );
+            });
+
+            setPage(nextPage);
+            setHasNext(!data.last);
+        } catch (error) {
+            console.error("추가 게시글 조회 실패", error);
+        } finally {
+            setLoadingMore(false);
+        }
+
+    }
 
     const handleCreatePost = async () => {
 
@@ -70,7 +116,6 @@ const CommunityPage = () => {
 
             setContent("");
             setEmotion("NEUTRAL");
-            await fetchPosts();
             
         } catch (error) {
             console.error("게시글 작성 실패", error);
@@ -88,21 +133,7 @@ const CommunityPage = () => {
 
         try {
             setReactingPostId(postId);
-
-            const result = await reactToCommunityPost(postId, {reactionType});
-
-            setPosts((prev) =>
-                prev.map((post) => 
-                    post.id === postId
-                        ? {
-                            ...post,
-                            myReaction: result.myReaction,
-                            reactionSummary: result.reactionSummary,
-                        }
-                        : post,
-                ),
-            );
-
+            await reactToCommunityPost(postId, {reactionType});
         } catch (error) {
             console.error("리액션 처리 실패", error);
         } finally {
@@ -111,8 +142,76 @@ const CommunityPage = () => {
     };
 
     useEffect(() => {
-        fetchPosts();
-    }, [selectedEmotion])
+        const node = observerRef.current;
+        if (!node) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+
+                if (entries[0].isIntersecting) {
+                    fetchMorePosts();
+                }
+            },
+            {
+                root: null,
+                rootMargin: "0px 0px 200px 0px",
+                threshold: 0,
+            },
+        );
+
+        observer.observe(node);
+
+        return () => {
+            observer.disconnect();
+        };
+
+    } , [page, hasNext, loadingMore, loading, selectedEmotion]);
+
+    // 실시간 변화 반영 (webSocket)
+    useEffect(() => {
+        connectCommunitySocket((message: CommunitySocketEvent) => {
+            if (message.type === "NEW_POST"){
+                const newPost = message.data;
+
+                if (selectedEmotion && newPost.emotion !== selectedEmotion) {
+                    return;
+                }
+
+                setPosts((prev) => {
+                    if (prev.some((post) => post.id === newPost.id)){
+                        return prev;
+                    }
+
+                    return [newPost, ...prev];
+                });
+            }
+
+            if (message.type === "REACTION_UPDATED") {
+                const updated = message.data;
+
+                setPosts((prev) => 
+                    prev.map((post) => 
+                        post.id === updated.postId
+                            ? {
+                                ...post,
+                                myReaction: updated.myReaction,
+                                reactionSummary: updated.reactionSummary,
+                              }
+                            : post,
+                    ),
+                );
+            }
+        });
+
+        return () => {
+            disconnectCommunitySocket();
+        };
+    }, [selectedEmotion]);
+
+    // 초기 데이터/필터 데이터 로딩 역할(REST API)
+    useEffect(() => {
+        fetchInitialPosts();
+    }, [selectedEmotion]);
 
     return(
         <div className={Styles.page}>
@@ -175,9 +274,10 @@ const CommunityPage = () => {
                 </div>
              </div>
 
-             {loading ? (
-                <p className={Styles.statusText}>불러오는 중...</p>
-             ) : (
+        {loading ? (
+            <p className={Styles.statusText}>불러오는 중...</p>
+        ) : (
+            <>
                 <div className={Styles.postList}>
                     {posts.map((post) => (
                         <div key={post.id} className={Styles.postCard}>
@@ -212,9 +312,9 @@ const CommunityPage = () => {
                                     }`}
                                 >
                                     위로 {post.reactionSummary.comfortCount}
-                                    </button>
+                                </button>
 
-                                    <button
+                                <button
                                     type="button"
                                     onClick={() => handleReact(post.id, "CHEER")}
                                     disabled={reactingPostId === post.id}
@@ -223,14 +323,24 @@ const CommunityPage = () => {
                                     }`}
                                 >
                                     응원 {post.reactionSummary.cheerCount}
-                                    </button>
+                                </button>
                             </div>
                         </div>
                     ))}
-                </div>
-             )}
-        </div>
-    )
-}
 
+                    <div ref={observerRef} style={{ height: "1px" }} />
+                </div>
+
+                {loadingMore && (
+                    <p className={Styles.statusText}>게시글 더 불러오는 중...</p>
+                )}
+
+                {!hasNext && posts.length > 0 && (
+                    <p className={Styles.statusText}>마지막 게시글입니다.</p>
+                )}
+            </>
+        )}
+        </div>
+    );
+};
 export default CommunityPage;

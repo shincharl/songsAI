@@ -7,6 +7,7 @@ import com.example.BeatAI.dto.PostReactionRequest;
 import com.example.BeatAI.dto.PostReactionResponse;
 import com.example.BeatAI.entity.CommunityEmotion;
 import com.example.BeatAI.service.CommunityService;
+import com.example.BeatAI.service.CommunitySocketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,13 +21,21 @@ import org.springframework.web.bind.annotation.*;
 public class CommunityController {
 
   private final CommunityService communityService;
+  private final CommunitySocketService communitySocketService;
 
   @PostMapping
   public CommunityPostResponse createPost(
     @AuthenticationPrincipal UserPrincipal userPrincipal,
     @RequestBody @Valid CommunityPostCreateRequest request
     ){
-    return communityService.createPost(userPrincipal.getId(), request);
+
+    CommunityPostResponse response =
+      communityService.createPost(userPrincipal.getId(), request);
+
+    // webSocket broadcast 진행
+    communitySocketService.sendNewPost(response);
+
+    return response;
   }
 
   @GetMapping
@@ -52,6 +61,13 @@ public class CommunityController {
     @PathVariable Long postId,
     @RequestBody @Valid PostReactionRequest request
     ){
-    return communityService.reactToPost(userPrincipal.getId(), postId, request);
+
+      PostReactionResponse response =
+        communityService.reactToPost(userPrincipal.getId(), postId, request);
+
+      // webSocket broadcast 진행
+      communitySocketService.sendReactionUpdate(response);
+
+      return response;
   }
 }
