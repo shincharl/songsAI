@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Styles from "../../styles/CommunityPage.module.css"
-import { createCommunityPost, getCommunityPosts, reactToCommunityPost, type CommunityEmotion, type CommunityPostResponse, type CommunitySocketEvent, type ReactionType } from "../../api/community";
+import { createComment, createCommunityPost, getCommentsByPost, getCommunityPosts, reactToCommunityPost, type CommunityCommentResponse, type CommunityEmotion, type CommunityPostResponse, type CommunitySocketEvent, type ReactionType } from "../../api/community";
 import { useAuthStore } from "../../store/useAuthStore";
 import { connectCommunitySocket, disconnectCommunitySocket } from "../../api/communitySocket";
 
@@ -37,6 +37,18 @@ const CommunityPage = () => {
     const [page, setPage] = useState(0);
     const [hasNext, setHasNext] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
+
+    // 댓글창 열린 게시글 id들
+    const [expandedPostIds, setExpandedPostIds] = useState<number[]>([]);
+    // 게시글별 댓글 목록
+    const [commentsMap, setCommentsMap] = useState<Record<number, CommunityCommentResponse[]>>({});
+    // 게시글별 댓글 입력값
+    const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
+    // 댓글 불러오는 중인 게시글
+    const [loadingCommentPostId, setLoadingCommentPostId] = useState<number | null>(null);
+    // 댓글 등록 중인 게시글
+    const [submittingCommentPostId, setSubmittingCommentPostId] = useState<number | null>(null);
+
 
     const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -140,6 +152,67 @@ const CommunityPage = () => {
             setReactingPostId(null);
         }
     };
+
+    const handleToggleComments = async (postId: number) => {
+        const isExpanded = expandedPostIds.includes(postId);
+
+        if (isExpanded) {
+            setExpandedPostIds((prev) => prev.filter((id) => id !== postId));
+            return;
+        }
+
+        setExpandedPostIds((prev) => [...prev, postId]);
+
+        if(!commentsMap[postId]){
+            try {
+                setLoadingCommentPostId(postId);
+                const comments = await getCommentsByPost(postId);
+
+                setCommentsMap((prev) => ({
+                    ...prev,
+                    [postId]: comments,
+                }));
+
+            } catch (error) {
+               console.error("댓글 조회 실패", error); 
+            } finally {
+                setLoadingCommentPostId(null);
+            }
+        }
+    }
+
+    const handleCreateComment = async (postId: number) => {
+         if (!isLoggedIn) {
+            alert("로그인이 필요한 서비스입니다.");
+            return;
+         }
+
+         const input = commentInputs[postId]?.trim();
+         if (!input) return;
+
+         try {
+            setSubmittingCommentPostId(postId);
+
+            const newComment = await createComment(postId, {
+                content: input,
+            });
+
+            setCommentsMap((prev) => ({
+                ...prev,
+                [postId]: [...(prev[postId] || []), newComment],
+            }));
+
+            setCommentInputs((prev) => ({
+                ...prev,
+                [postId]: "",
+            }));
+
+         } catch (error) {
+            console.error("댓글 작성 실패", error);
+         } finally {
+            setSubmittingCommentPostId(null);
+         }
+    }
 
     useEffect(() => {
         const node = observerRef.current;
@@ -325,6 +398,65 @@ const CommunityPage = () => {
                                     응원 {post.reactionSummary.cheerCount}
                                 </button>
                             </div>
+
+                            <div className={Styles.commentActionBar}>
+                                <button
+                                    type="button"
+                                    className={Styles.commentToggleButton}
+                                    onClick={() => handleToggleComments(post.id)}
+                                >
+                                    댓글 보기
+                                </button>
+                            </div>
+
+                            {expandedPostIds.includes(post.id) && (
+                                <div className={Styles.commentSection}>
+                                    {loadingCommentPostId === post.id ? (
+                                        <p className={Styles.commentStatus}>댓글 불러오는 중...</p>
+                                    ) : (
+                                        <>
+                                            <div className={Styles.commentList}>
+                                                {(commentsMap[post.id] || []).length === 0 ? (
+                                                    <p className={Styles.commentStatus}>아직 댓글이 없습니다.</p>
+                                                ) : (
+                                                    commentsMap[post.id].map((comment) => (
+                                                        <div key={comment.id} className={Styles.commentItem}>
+                                                            <div className={Styles.commentMeta}>
+                                                                <strong>{comment.nickname}</strong>
+                                                                <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                                                            </div>
+                                                            <div className={Styles.commentContent}>{comment.content}</div>
+                                                        </div>
+                                                    ))
+                                                )}
+                                            </div>
+
+                                            <div className={Styles.commentComposer}>
+                                                <input 
+                                                    type="text"
+                                                    className={Styles.commentInput}
+                                                    placeholder="댓들을 입력하세요"
+                                                    value={commentInputs[post.id] || ""}
+                                                    onChange={(e) =>
+                                                        setCommentInputs((prev) => ({
+                                                            ...prev,
+                                                            [post.id]: e.target.value,
+                                                        }))
+                                                    }
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className={Styles.commentSubmitButton}
+                                                    onClick={() => handleCreateComment(post.id)}
+                                                    disabled={submittingCommentPostId === post.id}
+                                                >
+                                                    등록
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))}
 

@@ -33,10 +33,10 @@ public class SecurityConfig {
         // 커뮤니티 조회는 공개
         .requestMatchers(HttpMethod.GET, "/api/community/posts").permitAll()
 
-        // 커뮤니티 작성/리액션은 로그인 필요
+        // 커뮤니티 작성/리액션/댓글은 로그인 필요
         .requestMatchers(HttpMethod.POST, "/api/community/posts").authenticated()
         .requestMatchers(HttpMethod.POST, "/api/community/posts/*/reactions").authenticated()
-
+        .requestMatchers(HttpMethod.POST, "/community/posts/*/comments").authenticated()
         .anyRequest().permitAll()
       );
     

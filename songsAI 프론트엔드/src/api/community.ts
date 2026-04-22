@@ -18,6 +18,10 @@ export type CommunitySocketEvent =
   | {
       type: "REACTION_UPDATED";
       data: PostReactionResponse;
+    }
+  | {
+      type: "NEW_COMMENT";
+      data: CommunityCommentResponse;
     };
 
 export interface CommunityPostCreateRequest {
@@ -27,6 +31,10 @@ export interface CommunityPostCreateRequest {
 
 export interface PostReactionRequest {
   reactionType: ReactionType;
+}
+
+export interface CommunityCommentCreateRequest {
+  content: string;
 }
 
 export interface ReactionSummaryResponse {
@@ -43,6 +51,7 @@ export interface CommunityPostResponse {
   createdAt: string;
   reactionSummary: ReactionSummaryResponse;
   myReaction: ReactionType | null;
+  commentCount?: number;
 }
 
 export interface PostReactionResponse {
@@ -59,6 +68,14 @@ export interface PageResponse<T> {
   number: number;
   first: boolean;
   last: boolean;
+}
+
+export interface CommunityCommentResponse {
+  id: number;
+  postId: number;
+  nickname: string;
+  content: string;
+  createdAt: string;
 }
 
 export const createCommunityPost = async (
@@ -91,6 +108,24 @@ export const reactToCommunityPost = async (
 ) => {
   const response = await api.post<PostReactionResponse>(
     `/community/posts/${postId}/reactions`,
+    request,
+  );
+  return response.data;
+};
+
+export const getCommentsByPost = async (postId: number) => {
+  const response = await api.get<CommunityCommentResponse[]>(
+    `/community/posts/${postId}/comments`,
+  );
+  return response.data;
+};
+
+export const createComment = async (
+  postId: number,
+  request: CommunityCommentCreateRequest,
+) => {
+  const response = await api.post<CommunityCommentResponse>(
+    `/community/posts/${postId}/comments`,
     request,
   );
   return response.data;
