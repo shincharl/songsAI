@@ -31,9 +31,17 @@ const SetFirstNickname = () => {
         <>
             <div className={styles.wrapper}>
                 <div className={styles.box}>
+
+                    <div className={styles.icon}>🌿</div>
+
                     <h2 className={styles.title}>
                         닉네임을 설정해주세요
                     </h2>
+
+                    <p className={styles.subtitle}>
+                        나를 표현할 이름을 만들어보세요
+                    </p>
+
                     <input 
                         type="text"
                         placeholder="닉네임 입력"
@@ -42,7 +50,7 @@ const SetFirstNickname = () => {
                         className={styles.input}
                     />
                     <button className={styles.loginBtn} onClick={handleSubmit}>
-                        설정 완료
+                        시작하기 →
                     </button>
                 </div>
             </div>

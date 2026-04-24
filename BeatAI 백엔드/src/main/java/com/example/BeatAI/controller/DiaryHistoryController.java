@@ -4,6 +4,7 @@ import com.example.BeatAI.config.UserPrincipal;
 import com.example.BeatAI.dto.DiaryHistoryDetailResponse;
 import com.example.BeatAI.dto.DiaryHistoryResponse;
 import com.example.BeatAI.dto.DiaryHistorySearchRequest;
+import com.example.BeatAI.dto.RecentDiaryResponse;
 import com.example.BeatAI.entity.User;
 import com.example.BeatAI.service.DiaryHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,15 @@ public class DiaryHistoryController {
     @ModelAttribute DiaryHistorySearchRequest request
     ) {
     return diaryHistoryService.getHistory(userPrincipal.getUser(), request);
+  }
+
+  @GetMapping("/history/recent")
+  public ResponseEntity<List<RecentDiaryResponse>> getRecentDiaries(
+    @AuthenticationPrincipal UserPrincipal userPrincipal
+  ){
+    return ResponseEntity.ok(
+      diaryHistoryService.getRecentDiaries(userPrincipal.getUser())
+    );
   }
 
   @GetMapping("/history/{diaryId}")

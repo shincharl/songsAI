@@ -1,11 +1,27 @@
-.container {
+.page {
   width: 100%;
-  margin: 0;          /* 좌우 여백 제거 */
-  padding: 0;         /* 불필요한 패딩 제거 */
+  max-width: 1200px;
+  min-height: calc(100vh - 150px);
+  margin: 0 auto;
+  padding: 70px 20px 1px;
+}
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.homeGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
   gap: 80px;
-  padding: 40px;
+  align-items: start;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 55px;
 }

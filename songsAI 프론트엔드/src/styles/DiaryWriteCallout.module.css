@@ -1,0 +1,49 @@
+.callout {
+  margin-top: 34px;
+  padding: 26px 32px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f4eaff, #f0e6ff);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.iconBox {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #9b5cf6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.textBox {
+  flex: 1;
+}
+
+.textBox h2 {
+  font-size: 19px;
+  font-weight: 900;
+  color: #7c3aed;
+  margin-bottom: 7px;
+}
+
+.textBox p {
+  font-size: 14px;
+  color: #666;
+}
+
+.button {
+  border: none;
+  border-radius: 10px;
+  padding: 14px 22px;
+  background: #7c3aed;
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}

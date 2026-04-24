@@ -4,10 +4,22 @@ import type { CommunitySocketEvent } from "./community";
 let client: Client | null = null;
 let subscriptions: StompSubscription[] = [];
 
+const listeners = new Set<(event: CommunitySocketEvent) => void>();
+
+const notifyListeners = (event: CommunitySocketEvent) => {
+  listeners.forEach((listener) => listener(event));
+};
+
 export const connectCommunitySocket = (
   onMessage: (event: CommunitySocketEvent) => void,
 ) => {
-  if (client?.active) return;
+  listeners.add(onMessage);
+
+  if (client?.active) {
+    return () => {
+      listeners.delete(onMessage);
+    };
+  }
 
   client = new Client({
     brokerURL: `${import.meta.env.VITE_WS_BASE_URL}/ws-community`,
@@ -20,18 +32,16 @@ export const connectCommunitySocket = (
     const postSub = client!.subscribe(
       "/topic/community",
       (message: IMessage) => {
-        console.log("새 글 raw:", message.body);
         const body = JSON.parse(message.body) as CommunitySocketEvent;
-        onMessage(body);
+        notifyListeners(body);
       },
     );
 
     const reactionSub = client!.subscribe(
       "/topic/community/reaction",
       (message: IMessage) => {
-        console.log("리액션 raw:", message.body);
         const body = JSON.parse(message.body) as CommunitySocketEvent;
-        onMessage(body);
+        notifyListeners(body);
       },
     );
 
@@ -47,11 +57,17 @@ export const connectCommunitySocket = (
   };
 
   client.activate();
+
+  return () => {
+    listeners.delete(onMessage);
+  };
 };
 
 export const disconnectCommunitySocket = async () => {
   subscriptions.forEach((sub) => sub.unsubscribe());
   subscriptions = [];
+
+  listeners.clear();
 
   if (client) {
     await client.deactivate();

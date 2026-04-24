@@ -3,6 +3,7 @@ package com.example.BeatAI.service;
 import com.example.BeatAI.dto.DiaryHistoryDetailResponse;
 import com.example.BeatAI.dto.DiaryHistoryResponse;
 import com.example.BeatAI.dto.DiaryHistorySearchRequest;
+import com.example.BeatAI.dto.RecentDiaryResponse;
 import com.example.BeatAI.entity.Diary;
 import com.example.BeatAI.entity.EmotionLog;
 import com.example.BeatAI.entity.User;
@@ -50,6 +51,19 @@ public class DiaryHistoryService {
         topEmotion,
         diary.getContent()
       );
+  }
+
+  public List<RecentDiaryResponse> getRecentDiaries(User user) {
+    return diaryRepository.findTop3ByUserOrderByCreatedAtDesc(user)
+      .stream()
+      .map(diary -> {
+        EmotionLog topEmotionLog = emotionLogRepository
+          .findTopByDiaryOrderByScoreDesc(diary)
+          .orElse(null);
+
+        return RecentDiaryResponse.from(diary, topEmotionLog);
+      })
+      .toList();
   }
 
 }

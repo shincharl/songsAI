@@ -14,6 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -46,6 +49,10 @@ public class CommunityService {
       user = getUser(userId);
     }
 
+    LocalDate today = LocalDate.now();
+    LocalDateTime start = today.atStartOfDay();
+    LocalDateTime end = today.plusDays(1).atStartOfDay();
+
     Pageable sortedPageable = PageRequest.of(
       pageable.getPageNumber(),
       pageable.getPageSize(),
@@ -53,8 +60,17 @@ public class CommunityService {
     );
 
     Page<CommunityPost> posts = (emotion == null)
-      ? communityPostRepository.findAllByOrderByCreatedAtDesc(sortedPageable)
-      : communityPostRepository.findByEmotionOrderByCreatedAtDesc(emotion, sortedPageable);
+      ? communityPostRepository.findByCreatedAtBetweenOrderByCreatedAtDesc(
+      start,
+      end,
+      sortedPageable
+    )
+      : communityPostRepository.findByEmotionAndCreatedAtBetweenOrderByCreatedAtDesc(
+      emotion,
+      start,
+      end,
+      sortedPageable
+    );
 
     User finalUser = user;
     return posts.map(post -> toResponse(post, finalUser));

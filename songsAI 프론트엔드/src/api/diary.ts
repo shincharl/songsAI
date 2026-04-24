@@ -1,5 +1,13 @@
 import api from "../api/client";
 
+export type EmotionType =
+  | "HAPPY"
+  | "SAD"
+  | "ANGRY"
+  | "CALM"
+  | "EXCITED"
+  | "NEUTRAL";
+
 export interface DiaryStickerRequest {
   category: string;
   label: string;
@@ -44,13 +52,20 @@ export interface WeeklyInsightResponse {
   insight: string;
 }
 
+export interface WeeklyEmotionResponse {
+  emotion: EmotionType;
+  value: number;
+}
+
 export const analyzeDiary = async (data: DiaryAnalyzeRequest) => {
   const response = await api.post("/diary/analyze", data);
   return response.data;
 };
 
-export const getWeeklyEmotions = async () => {
-  const response = await api.get("/diary/weekly-emotions");
+export const getWeeklyEmotions = async (): Promise<WeeklyEmotionResponse[]> => {
+  const response = await api.get<WeeklyEmotionResponse[]>(
+    "/diary/weekly-emotions",
+  );
   return response.data;
 };
 

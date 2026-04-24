@@ -1,0 +1,57 @@
+.card {
+  position: relative;
+  width: 100%;
+  min-height: 190px;
+  padding: 34px 32px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #f1e8ff, #eadcff);
+  overflow: hidden;
+}
+
+.textBox {
+  position: relative;
+  z-index: 2;
+  padding-right: 72px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #6f4fd8;
+  font-weight: 700;
+}
+
+.textBox h2 {
+  font-size: 21px;
+  line-height: 1.3;
+  font-weight: 900;
+  margin-bottom: 10px;
+  word-break: keep-all;
+}
+
+.textBox p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #666;
+  margin-bottom: 24px;
+  word-break: keep-all;
+}
+
+.button {
+  border: none;
+  border-radius: 10px;
+  padding: 13px 18px;
+  background: #7c3aed;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.iconBox {
+  position: absolute;
+  right: 30px;
+  top: 78px;
+  font-size: 46px;
+  opacity: 0.85;
+}

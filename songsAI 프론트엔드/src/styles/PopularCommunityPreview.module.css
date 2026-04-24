@@ -1,0 +1,63 @@
+.section {
+  margin-top: 8px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.header h2 {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.moreButton {
+  border: none;
+  background: none;
+  color: #777;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #eee;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.tag {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #8b5cf6;
+}
+
+.item p {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.like {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: #777;
+}

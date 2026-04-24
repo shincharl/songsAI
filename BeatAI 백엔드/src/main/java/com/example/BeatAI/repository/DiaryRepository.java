@@ -28,5 +28,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long>, DiaryReposi
   // 선택한 사용자 일기 상세 검색
   Optional<Diary> findByIdAndUser(Long diaryId, User user);
 
+  // 최근 작성한 일기 상위 3개 검색
+  List<Diary> findTop3ByUserOrderByCreatedAtDesc(User user);
 
 }
