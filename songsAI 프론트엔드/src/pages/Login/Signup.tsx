@@ -4,9 +4,18 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 
 const Signup = () => {
+    const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
+    const KAKAO_REDIRECT_URI = "http://localhost:8081/api/auth/kakao/callback";
+
+    const kakaoLoginUrl =
+        `https://kauth.kakao.com/oauth/authorize` +
+        `?client_id=${KAKAO_REST_API_KEY}` +
+        `&redirect_uri=${KAKAO_REDIRECT_URI}` +
+        `&response_type=code`;
+
     return (
         <div className={styles.wrapper}>
-
+            
             {/* 로고 */}
             <img src={logo} alt="BeatAI logo" className={styles.logo} />
 
@@ -30,12 +39,12 @@ const Signup = () => {
 
                     </div>
 
-                    <Link to="/kakaologin">
+                    <a href={kakaoLoginUrl} className={styles.kakaoLink}>
                         <button className={styles.kakaoBtn}>
                             <FaComment className={styles.icon} />
                             카카오계정 로그인
                         </button>
-                    </Link>
+                    </a>
 
                     <Link to="/LocalSignup">
                         <button className={styles.defaultBtn}>

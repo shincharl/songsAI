@@ -5,7 +5,7 @@ interface AuthState {
   username: string | null;
   nickname: string | null; // 닉네임 필드
   isLogin: boolean;
-  login: (token: string, username: string) => void;
+  login: (token: string, username: string, nickname?: string) => void;
   logout: () => void;
   setNickname: (nickname: string) => void; // 닉네임 업데이트 함수
 }
@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({
       accessToken: token,
       username,
-      nickname: nickname || savedNickname,
+      nickname: nickname ?? null,
       isLogin: true,
     });
   },

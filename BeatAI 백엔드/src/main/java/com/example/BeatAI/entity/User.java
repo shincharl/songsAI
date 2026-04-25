@@ -20,6 +20,12 @@ public class User {
   @Column(name = "USER_ID")
   private Long id;
 
+  @Column(unique = true)
+  private Long kakaoId;
+
+  @Column(length = 30)
+  private String provider; //Local, KAKAO
+
   @Column(unique = true, nullable = false, length = 50)
   private String username;
 
@@ -78,6 +84,16 @@ public class User {
       throw new IllegalStateException("닉네임 이미 존재!!!");
     }
     this.nickname = nickname;
+  }
+
+  public static User createKakaoUser(Long kakaoId, String nickname){
+    User user = new User();
+    user.kakaoId = kakaoId;
+    user.username = "kakao_" + kakaoId;
+    user.passwordHash = "KAKAO_LOGIN";
+    user.nickname = nickname;
+    user.provider = "KAKAO";
+    return user;
   }
 
   // 닉네임 getter 추가

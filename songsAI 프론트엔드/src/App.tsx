@@ -9,6 +9,7 @@ import EmotionDiaryPage from "./pages/EmotionDiaryPage/EmotionDiaryPage";
 import DiaryHistoryPage from "./pages/HistoryPage/DiaryHistoryPage";
 import PlayListPage from "./pages/PlayListPage/PlayListPage";
 import CommunityPage from "./pages/CommunityPage/CommunityPage";
+import KakaoSuccessPage from "./pages/Login/KakaoSuccessPage";
 
 const App = () => {
     return(
@@ -29,6 +30,9 @@ const App = () => {
                     <Route path="/LocalSignup" element={<LocalSignup/>}/>
                     <Route path="/Register" element={<Register/>}/>
                     <Route path="/set-nickname" element={<SetFirstNickname/>}></Route>
+
+                    <Route path="/oauth/kakao/success" element={<KakaoSuccessPage />}/>
+
             </Routes>
 
     );
