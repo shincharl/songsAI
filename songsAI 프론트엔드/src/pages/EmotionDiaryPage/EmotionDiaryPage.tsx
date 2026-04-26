@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import DiaryBanner from "../../components/Diary/DiaryBanner";
 import styles from "../../styles/EmotionDiaryPage.module.css";
 import WriteDiaryModal from "../../components/Diary/WriteDiaryModal";
-import WeeklyEmotionChart from "../../components/Diary/WeeklyEmotionChart";
+import WeeklyEmotionChart, { type EmotionItem } from "../../components/Diary/WeeklyEmotionChart";
 import { getMonthlyCalendar, getRecommendedMusic, getTodayDiaryPreview, getWeeklyEmotions, getDayEmotionTrend, type YoutubeVideoItem, type WeeklyEmotionPoint, getWeeklyInsight } from "../../api/diary";
 import DiaryPreviewCard from "../../components/Diary/DiaryPreviewCard";
 import EmotionCalendar from "../../components/Diary/EmotionCalendar";
 import RecommendedMusicPlayer from "../../components/Diary/RecommendedMusicPlayer";
 import FloatingPlayList from "../../components/Diary/FloatingPlaylist";
 import DayEmotionChart from "../../components/Diary/DayEmotionChart";
+import { useLocation } from "react-router-dom";
+import { useAuthStore } from "../../store/useAuthStore";
 
 interface DiaryCalendarItem {
   diaryId: number;
@@ -18,9 +20,107 @@ interface DiaryCalendarItem {
   topEmotionScore: number | null;
 }
 
+const mockWeeklyEmotions = [
+  { emotion: "HAPPY", score: 42 },
+  { emotion: "CALM", score: 28 },
+  { emotion: "SAD", score: 15 },
+  { emotion: "ANGRY", score: 10 },
+  { emotion: "EXCITED", score: 25 },
+  { emotion: "NEUTRAL", score: 18 },
+];
+
+const mockDiaryContent =
+  "오늘은 조금 지쳤지만 좋아하는 음악을 들으면서 마음이 한결 편해졌다.";
+
+const mockDayEmotionData = [
+  { day: "월", score: 3.2, emoji: "😌", label: "평온", date: "4월 20일" },
+  { day: "화", score: 4.1, emoji: "😊", label: "좋음", date: "4월 21일" },
+  { day: "수", score: 2.6, emoji: "😢", label: "조금 다운", date: "4월 22일" },
+  { day: "목", score: 4.5, emoji: "🤩", label: "신남", date: "4월 23일" },
+  { day: "금", score: 3.8, emoji: "🙂", label: "보통", date: "4월 24일" },
+  { day: "토", score: 4.7, emoji: "😊", label: "매우 좋음", date: "4월 25일" },
+  { day: "일", score: 3.5, emoji: "😌", label: "평온", date: "4월 26일" },
+];
+
+const mockCalendar = [
+  { date: "2026-04-01", diaryId: 1, preview: "기분 좋음", topEmotion: "HAPPY", topEmotionScore: 0.8 },
+  { date: "2026-04-02", diaryId: 2, preview: "조금 우울", topEmotion: "SAD", topEmotionScore: 0.6 },
+];
+
+const mockMusicVideos = [
+  {
+    videoId: "60ItHLz5WEA",
+    title: "Alan Walker - Faded",
+    channelTitle: "Alan Walker",
+    thumbnailUrl: "https://i.ytimg.com/vi/60ItHLz5WEA/hqdefault.jpg",
+  },
+  {
+    videoId: "RgKAFK5djSk",
+    title: "Wiz Khalifa - See You Again ft. Charlie Puth",
+    channelTitle: "Wiz Khalifa",
+    thumbnailUrl: "https://i.ytimg.com/vi/RgKAFK5djSk/hqdefault.jpg",
+  },
+  {
+    videoId: "ktvTqknDobU",
+    title: "Imagine Dragons - Radioactive",
+    channelTitle: "ImagineDragons",
+    thumbnailUrl: "https://i.ytimg.com/vi/ktvTqknDobU/hqdefault.jpg",
+  },
+  {
+    videoId: "2Vv-BfVoq4g",
+    title: "Ed Sheeran - Perfect",
+    channelTitle: "Ed Sheeran",
+    thumbnailUrl: "https://i.ytimg.com/vi/2Vv-BfVoq4g/hqdefault.jpg",
+  },
+  {
+    videoId: "3JZ4pnNtyxQ",
+    title: "Mark Ronson - Uptown Funk ft. Bruno Mars",
+    channelTitle: "Mark Ronson",
+    thumbnailUrl: "https://i.ytimg.com/vi/3JZ4pnNtyxQ/hqdefault.jpg",
+  },
+  {
+    videoId: "9bZkp7q19f0",
+    title: "PSY - GANGNAM STYLE",
+    channelTitle: "officialpsy",
+    thumbnailUrl: "https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg",
+  },
+  {
+    videoId: "hHW1oY26kxQ",
+    title: "잔잔한 발라드 모음 - 하루 마무리 플레이리스트",
+    channelTitle: "Kpop Ballad",
+    thumbnailUrl: "https://i.ytimg.com/vi/hHW1oY26kxQ/hqdefault.jpg",
+  },
+  {
+    videoId: "DWcJFNfaw9c",
+    title: "감성 인디 음악 모음 (한국 인디)",
+    channelTitle: "K-Indie",
+    thumbnailUrl: "https://i.ytimg.com/vi/DWcJFNfaw9c/hqdefault.jpg",
+  },
+  {
+    videoId: "jfKfPfyJRdk",
+    title: "lofi hip hop radio - relax/study music",
+    channelTitle: "Lofi Girl",
+    thumbnailUrl: "https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg",
+  },
+  {
+    videoId: "5qap5aO4i9A",
+    title: "chill lofi beats to relax",
+    channelTitle: "Lofi Girl",
+    thumbnailUrl: "https://i.ytimg.com/vi/5qap5aO4i9A/hqdefault.jpg",
+  },
+];
+
 const EmotionDiaryPage = () => {
+
+  const location = useLocation();
+
+  const { accessToken } = useAuthStore();
+  const isLogin = !!accessToken;
+
   const [openModal, setOpenModal] = useState(false);
-  const [chartData, setChartData] = useState([]);
+  const [initialContent, setInitialContent] = useState("");
+
+  const [chartData, setChartData] = useState<EmotionItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [diaryContent, setDiaryContent] = useState("");
@@ -58,17 +158,47 @@ const EmotionDiaryPage = () => {
   }, [openModal]);
 
   useEffect(() => {
+    if (!isLogin){
+      setChartData(mockWeeklyEmotions);
+      setDiaryContent(mockDiaryContent);
+      setDiaryStickers([]);
+      setTodayDiaryId(null);
+
+      setDayEmotionData(mockDayEmotionData);
+      setWeeklyInsight("이번 주는 차분함과 설렘이 함께 흐르고 있어요.");
+
+      setMusicVideos(mockMusicVideos);
+      setMusicMoodTitle("차분한 하루를 위한 플레이리스트");
+      setMusicMoodDesc("오늘의 분위기에 어울리는 편안한 음악을 준비했어요.");
+      setSelectedVideoId(mockMusicVideos[0].videoId);
+
+      setLoading(false);
+      setPreviewLoading(false);
+      setDayEmotionLoading(false);
+      setMusicLoading(false);
+      return;
+    }
+
     fetchWeeklyEmotionData();
     fetchTodayDiaryPreview();
     fetchDayEmotionTrend();
     fetchWeeklyInsight();
-  }, []);
+  }, [isLogin]);
 
   useEffect(() => {
+
+    if (!isLogin) {
+      setCalendarData(mockCalendar);
+      setCalendarLoading(false);
+      return;
+    }
+
     fetchMonthlyCalendar(selectedDate);
-  }, [selectedDate.getFullYear(), selectedDate.getMonth()]);
+  }, [selectedDate.getFullYear(), selectedDate.getMonth(), isLogin]);
 
   useEffect(() => {
+    if (!isLogin) return;
+
     const fetchMusicRecommendation = async () => {
       if (!todayDiaryId) {
         setMusicVideos([]);
@@ -104,7 +234,7 @@ const EmotionDiaryPage = () => {
     };
 
     fetchMusicRecommendation();
-  }, [todayDiaryId]);
+  }, [todayDiaryId, isLogin]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -116,19 +246,36 @@ const EmotionDiaryPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (location.state?.openModal){
+      setOpenModal(true);
+
+      if (location.state.content){
+        setInitialContent(location.state.content);
+      }
+
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   // 주간 감정 데이터 조회 fetch
   const fetchWeeklyEmotionData = async() => {
     try {
         setLoading(true);
         const data = await getWeeklyEmotions();
-        setChartData(data);
+        setChartData(
+          data.map((item: EmotionItem) => ({
+            emotion: item.emotion,
+            score: item.score ?? 0,
+          }))
+        );
     } catch (error) {
         console.error("주간 감정 데이터 조회 실패:", error);
         setChartData([]);
     }finally {
         setLoading(false);
     }
-  }
+  };
 
   // 오늘 일기 preview fetch
   const fetchTodayDiaryPreview = async () => {
@@ -347,7 +494,10 @@ const EmotionDiaryPage = () => {
       )}
 
       {openModal && (
-        <WriteDiaryModal onClose={() => setOpenModal(false)} />
+        <WriteDiaryModal 
+          onClose={() => setOpenModal(false)}
+          initialContent = {initialContent}  
+        />
       )}
     </div>
   );

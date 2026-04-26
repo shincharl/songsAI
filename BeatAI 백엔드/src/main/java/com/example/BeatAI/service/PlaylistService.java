@@ -72,7 +72,7 @@ public class PlaylistService {
       recommendedVideoRepository.findTrendingPlaylistsBetween(
         start,
         end,
-        PageRequest.of(0, 8)
+        PageRequest.of(0, 20)
       );
 
     return IntStream.range(0, results.size())

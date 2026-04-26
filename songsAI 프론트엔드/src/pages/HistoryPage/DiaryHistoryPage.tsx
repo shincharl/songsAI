@@ -4,6 +4,50 @@ import { getDiaryDetail, getDiaryHistory } from "../../api/diaryHistory";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css"
 import DiarySearchBox from "../../components/DiaryHistory/DiarySearchBox";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
+
+const mockHistoryList: DiaryHistoryItem[] = [
+  {
+    diaryId: 1,
+    date: "2026-04-20",
+    topEmotion: "HAPPY",
+    preview: "오늘은 기분이 좋아서 음악 들으면서 산책했다.",
+  },
+  {
+    diaryId: 2,
+    date: "2026-04-21",
+    topEmotion: "CALM",
+    preview: "조용한 하루, 커피 마시면서 여유를 느꼈다.",
+  },
+  {
+    diaryId: 3,
+    date: "2026-04-22",
+    topEmotion: "SAD",
+    preview: "조금 우울했지만 음악 덕분에 괜찮아졌다.",
+  },
+];
+
+const mockDiaryDetails: Record<number, DiaryDetail> = {
+  1: {
+    diaryId: 1,
+    date: "2026-04-20",
+    topEmotion: "HAPPY",
+    content: "오늘은 기분이 너무 좋아서 음악 들으며 산책했다.",
+  },
+  2: {
+    diaryId: 2,
+    date: "2026-04-21",
+    topEmotion: "CALM",
+    content: "조용한 카페에서 음악 들으며 여유로운 하루를 보냈다.",
+  },
+  3: {
+    diaryId: 3,
+    date: "2026-04-22",
+    topEmotion: "SAD",
+    content: "조금 우울했지만 음악이 위로가 되어줬다.",
+  },
+};
 
 type DiaryHistoryItem = {
     diaryId: number;
@@ -19,7 +63,14 @@ type DiaryDetail = {
     content: string;
 };
 
+
 const DiaryHistoryPage = () => {
+
+    const { accessToken } = useAuthStore();
+    const isLogin = !!accessToken;
+
+    const navigate = useNavigate();
+
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [activeFilter, setActiveFilter] = useState("전체");
 
@@ -62,6 +113,12 @@ const DiaryHistoryPage = () => {
     }, [selectedDiaryId]);
 
     const fetchHistory = async () => {
+        if (!isLogin){
+            setHistoryList(mockHistoryList);
+            setLoading(false);
+            return;
+        }
+
         try {
             setLoading(true);
 
@@ -85,6 +142,12 @@ const DiaryHistoryPage = () => {
     };
 
     const fetchDiaryDetail = async (diaryId: number) => {
+        if (!isLogin) {
+            setSelectedDiaryDetail(mockDiaryDetails[diaryId] ?? null);
+            setDetailLoading(false);
+            return;
+        }
+
         try {
             setDetailLoading(true);
             const data = await getDiaryDetail(diaryId);
@@ -146,6 +209,8 @@ const DiaryHistoryPage = () => {
     };
 
     const handleSearchSubmit = () => {
+        if (!requireLogin()) return;
+
         setSearchKeyword(searchInput);
     };
 
@@ -170,6 +235,15 @@ const DiaryHistoryPage = () => {
         setIsDragging(false);
     };
 
+    const requireLogin = () => {
+        if (!isLogin) {
+          alert("로그인이 필요한 서비스입니다.");
+          navigate("/signup");
+           return false;
+        }
+        return true;
+    };
+
     return(
         <div className={styles.page}>
             {/* 상단 필터 바 */}
@@ -182,11 +256,14 @@ const DiaryHistoryPage = () => {
                         <span className={styles.calendarIcon}>📅</span>
 
                         <DatePicker
-                        selected={selectedDate}
-                        onChange={(date: Date) => setSelectedDate(date)}
-                        dateFormat="yyyy년 MM월"
-                        showMonthYearPicker
-                        className={styles.monthSelect}
+                            selected={selectedDate}
+                            onChange={(date: Date) => {
+                                if (!requireLogin()) return;
+                                setSelectedDate(date)
+                            }}
+                            dateFormat="yyyy년 MM월"
+                            showMonthYearPicker
+                            className={styles.monthSelect}
                     />
                     </div>
 
@@ -204,7 +281,11 @@ const DiaryHistoryPage = () => {
                                 className={`${styles.filterBtn} ${
                                     activeFilter === filter ? styles.active : ""
                                 }`}
-                                onClick={() => setActiveFilter(filter)}
+                                
+                                onClick={() => {
+                                    if (!requireLogin()) return;
+                                    setActiveFilter(filter);
+                                }}
                             >
                                 {filter === "기쁨" && "😊 "}
                                 {filter === "슬픔" && "😢 "}

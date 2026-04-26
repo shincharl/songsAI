@@ -90,7 +90,7 @@ const WeeklyEmotionChart = ({
 
                         <div className={styles.valueBox}>
                             <span className={styles.percent}>{item.percent}%</span>
-                            <span className={styles.score}>{item.score.toFixed(1)}</span>
+                            <span className={styles.score}>{(item.score ?? 0).toFixed(1)}</span>
                         </div>
                     </div>
                 ))}

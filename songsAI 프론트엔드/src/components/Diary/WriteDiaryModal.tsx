@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../../styles/WriteDiaryModal.module.css"
 import Sticker from "./Sticker";
 import {analyzeDiary} from "../../api/diary";
 
 interface Props {
     onClose: () => void;
+    initialContent?: string;
 }
 
 type StickerCategory = "emotion" | "weather" | "deco" | "study" | "food";
@@ -64,10 +65,11 @@ const CATEGORY_NAME = {
   food: "음식"
 };
 
-const WriteDiaryModel = ({ onClose }: Props) => {
+const WriteDiaryModel = ({ onClose, initialContent }: Props) => {
 
     // const [stickers, setStickers] = useState<string[]>([]);
     // const [text, setText] = useState("");
+
 
     const [pages, setPages] = useState<string[]>([""]); // 최소 한 페이지
     const [currentPage, setCurrentPage] = useState(0);
@@ -76,6 +78,12 @@ const WriteDiaryModel = ({ onClose }: Props) => {
     const [loading, setLoading] = useState(false);
     const [done, setDone] = useState(false);
     const [stepText, setStepText] = useState("AI가 감정을 분석중입니다...");
+
+    useEffect(() => {
+      if (initialContent){
+        setPages([initialContent]);
+      }
+    }, [initialContent]);
     
     // 스티커 추가 메서드
     const addSticker = (

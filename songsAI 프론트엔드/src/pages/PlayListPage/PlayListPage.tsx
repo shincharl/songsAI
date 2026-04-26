@@ -10,10 +10,201 @@ import {
   type FeaturedPlaylistResponse,
   type TrendingPlaylistItem,
 } from "../../api/playlist";
+import { useAuthStore } from "../../store/useAuthStore";
+
+const mockFeaturedPlaylist = {
+  badge: "😊 오늘의 추천",
+  title: "기분 좋은 하루를 위한 플레이리스트",
+  description: "밝고 경쾌한 음악으로 하루를 시작해보세요.",
+  thumbnailUrl: "https://i.ytimg.com/vi/60ItHLz5WEA/hqdefault.jpg",
+  channelTitle: "Mood Music",
+  videoId: "60ItHLz5WEA",
+};
+
+const mockTrendingVideos = [
+  {
+    id: 1,
+    tag: "🔥 인기",
+    title: "Alan Walker - Faded",
+    channelTitle: "Alan Walker",
+    thumbnailUrl: "https://i.ytimg.com/vi/60ItHLz5WEA/hqdefault.jpg",
+    videoId: "60ItHLz5WEA",
+    recommendCount: 120,
+  },
+  {
+    id: 2,
+    tag: "😊 힐링",
+    title: "Ed Sheeran - Perfect",
+    channelTitle: "Ed Sheeran",
+    thumbnailUrl: "https://i.ytimg.com/vi/2Vv-BfVoq4g/hqdefault.jpg",
+    videoId: "2Vv-BfVoq4g",
+    recommendCount: 98,
+  },
+  {
+    id: 3,
+    tag: "💔 감성",
+    title: "Billie Eilish - Happier Than Ever",
+    channelTitle: "Billie Eilish",
+    thumbnailUrl: "https://i.ytimg.com/vi/5GJWxDKyk3A/hqdefault.jpg",
+    videoId: "5GJWxDKyk3A",
+    recommendCount: 87,
+  },
+  {
+    id: 4,
+    tag: "⚡ 에너지",
+    title: "Imagine Dragons - Believer",
+    channelTitle: "Imagine Dragons",
+    thumbnailUrl: "https://i.ytimg.com/vi/7wtfhZwyrcc/hqdefault.jpg",
+    videoId: "7wtfhZwyrcc",
+    recommendCount: 110,
+  },
+  {
+    id: 5,
+    tag: "🎸 락",
+    title: "Queen - Don't Stop Me Now",
+    channelTitle: "Queen Official",
+    thumbnailUrl: "https://i.ytimg.com/vi/HgzGwKwLmgM/hqdefault.jpg",
+    videoId: "HgzGwKwLmgM",
+    recommendCount: 76,
+  },
+  {
+    id: 6,
+    tag: "🌙 잔잔",
+    title: "IU - 밤편지",
+    channelTitle: "IU Official",
+    thumbnailUrl: "https://i.ytimg.com/vi/BzYnNdJhZQw/hqdefault.jpg",
+    videoId: "BzYnNdJhZQw",
+    recommendCount: 95,
+  },
+  {
+    id: 7,
+    tag: "💕 설렘",
+    title: "Taylor Swift - Love Story",
+    channelTitle: "Taylor Swift",
+    thumbnailUrl: "https://i.ytimg.com/vi/8xg3vE8Ie_E/hqdefault.jpg",
+    videoId: "8xg3vE8Ie_E",
+    recommendCount: 102,
+  },
+  {
+    id: 8,
+    tag: "🎧 집중",
+    title: "Lofi Hip Hop Radio - Beats to Relax/Study",
+    channelTitle: "Lofi Girl",
+    thumbnailUrl: "https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg",
+    videoId: "jfKfPfyJRdk",
+    recommendCount: 89,
+  },
+];
+
+const mockCategories = [
+  { emotion: "HAPPY", emoji: "😊", title: "행복", subtitle: "기분 좋을 때 듣는 음악" },
+  { emotion: "SAD", emoji: "😢", title: "슬픔", subtitle: "감성적인 음악" },
+  { emotion: "CALM", emoji: "😌", title: "편안함", subtitle: "차분한 음악" },
+  { emotion: "EXCITED", emoji: "🤩", title: "신남", subtitle: "텐션 올리고 싶을 때" },
+];
+
+const mockCategoryVideos = {
+  HAPPY: [
+    {
+      id: 1,
+      title: "Uptown Funk",
+      channelTitle: "Mark Ronson",
+      thumbnailUrl: "https://i.ytimg.com/vi/3JZ4pnNtyxQ/hqdefault.jpg",
+      videoId: "3JZ4pnNtyxQ",
+    },
+    {
+      id: 2,
+      title: "Can't Stop The Feeling!",
+      channelTitle: "Justin Timberlake",
+      thumbnailUrl: "https://i.ytimg.com/vi/ru0K8uYEZWw/hqdefault.jpg",
+      videoId: "ru0K8uYEZWw",
+    },
+    {
+      id: 3,
+      title: "Happy - Pharrell Williams",
+      channelTitle: "Pharrell Williams",
+      thumbnailUrl: "https://i.ytimg.com/vi/ZbZSe6N_BXs/hqdefault.jpg",
+      videoId: "ZbZSe6N_BXs",
+    },
+  ],
+
+  SAD: [
+    {
+      id: 4,
+      title: "See You Again",
+      channelTitle: "Wiz Khalifa",
+      thumbnailUrl: "https://i.ytimg.com/vi/RgKAFK5djSk/hqdefault.jpg",
+      videoId: "RgKAFK5djSk",
+    },
+    {
+      id: 5,
+      title: "Someone Like You",
+      channelTitle: "Adele",
+      thumbnailUrl: "https://i.ytimg.com/vi/hLQl3WQQoQ0/hqdefault.jpg",
+      videoId: "hLQl3WQQoQ0",
+    },
+    {
+      id: 6,
+      title: "All of Me",
+      channelTitle: "John Legend",
+      thumbnailUrl: "https://i.ytimg.com/vi/450p7goxZqg/hqdefault.jpg",
+      videoId: "450p7goxZqg",
+    },
+  ],
+
+  CALM: [
+    {
+      id: 7,
+      title: "lofi hip hop - relax",
+      channelTitle: "Lofi Girl",
+      thumbnailUrl: "https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg",
+      videoId: "jfKfPfyJRdk",
+    },
+    {
+      id: 8,
+      title: "Chill Jazz Music",
+      channelTitle: "Jazz Cafe",
+      thumbnailUrl: "https://i.ytimg.com/vi/DSGyEsJ17cI/hqdefault.jpg",
+      videoId: "DSGyEsJ17cI",
+    },
+    {
+      id: 9,
+      title: "Rain Sounds for Sleep",
+      channelTitle: "Nature Sound",
+      thumbnailUrl: "https://i.ytimg.com/vi/mPZkdNFkNps/hqdefault.jpg",
+      videoId: "mPZkdNFkNps",
+    },
+  ],
+
+  EXCITED: [
+    {
+      id: 10,
+      title: "Dynamite",
+      channelTitle: "BTS",
+      thumbnailUrl: "https://i.ytimg.com/vi/gdZLi9oWNZg/hqdefault.jpg",
+      videoId: "gdZLi9oWNZg",
+    },
+    {
+      id: 11,
+      title: "Levitating",
+      channelTitle: "Dua Lipa",
+      thumbnailUrl: "https://i.ytimg.com/vi/TUVcZfQe-Kw/hqdefault.jpg",
+      videoId: "TUVcZfQe-Kw",
+    },
+    {
+      id: 12,
+      title: "Blinding Lights",
+      channelTitle: "The Weeknd",
+      thumbnailUrl: "https://i.ytimg.com/vi/4NRXx6U8ABQ/hqdefault.jpg",
+      videoId: "4NRXx6U8ABQ",
+    },
+  ],
+};
 
 type TrendingCard = TrendingPlaylistItem & {
   isPlaceholder?: boolean;
 };
+
 
 const openYoutube = (videoId: string) => {
   window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
@@ -41,6 +232,9 @@ const fillTrendingPlaceholders = (
 };
 
 const PlayListPage = () => {
+
+  const { accessToken } = useAuthStore();
+  const isLogin = !!accessToken;
   
   const [featuredPlaylist, setFeaturedPlaylist] =
     useState<FeaturedPlaylistResponse | null>(null);
@@ -54,6 +248,8 @@ const PlayListPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [isTrendingModalOpen, setIsTrendingModalOpen] = useState(false);
+
   const handleCategoryClick = async (emotion: string) => {
     if (selectedCategory === emotion) {
       setSelectedCategory(null);
@@ -62,6 +258,12 @@ const PlayListPage = () => {
     }
 
     setSelectedCategory(emotion);
+
+    if(!isLogin){
+      setCategoryVideos(mockCategoryVideos[emotion] || []);
+      return;
+    }
+
     setCategoryLoading(true);
 
     try {
@@ -76,6 +278,14 @@ const PlayListPage = () => {
   };
 
   useEffect(() => {
+    if (!isLogin) {
+      setFeaturedPlaylist(mockFeaturedPlaylist);
+      setTrendingVideos(fillTrendingPlaceholders(mockTrendingVideos, 20));
+      setCategoryPlaylists(mockCategories);
+      setLoading(false);
+      return;
+    }
+
     const fetchPlaylists = async () => {
       try {
         setLoading(true);
@@ -88,7 +298,7 @@ const PlayListPage = () => {
         ]);
 
         setFeaturedPlaylist(featured);
-        setTrendingVideos(fillTrendingPlaceholders(trending, 8));
+        setTrendingVideos(fillTrendingPlaceholders(trending, 20));
         setCategoryPlaylists(categories);
 
       } catch (err) {
@@ -100,7 +310,7 @@ const PlayListPage = () => {
     };
 
     fetchPlaylists();
-  }, []);
+  }, [isLogin]);
 
     useEffect(() => {
       if (selectedCategory) {
@@ -110,6 +320,25 @@ const PlayListPage = () => {
         });
       }
     }, [selectedCategory]);
+
+    useEffect(() => {
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setIsTrendingModalOpen(false);
+        }
+      };
+
+      window.addEventListener("keydown", handleEsc);
+      return () => window.removeEventListener("keydown", handleEsc);
+    }, []);
+
+    useEffect(() => {
+      if (isTrendingModalOpen) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    }, [isTrendingModalOpen]);
 
   if (loading) {
     return (
@@ -159,7 +388,11 @@ const PlayListPage = () => {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2>이번 주 인기 TOP 1</h2>
-            <button type="button" className={styles.moreButton}>
+            <button 
+              type="button" 
+              className={styles.moreButton}
+              onClick={() => setIsTrendingModalOpen(true)}
+            >
               전체 보기
             </button>
           </div>
@@ -208,13 +441,17 @@ const PlayListPage = () => {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2>요즘 많이 보는 추천 영상</h2>
-            <button type="button" className={styles.moreButton}>
+            <button 
+              type="button" 
+              className={styles.moreButton}
+              onClick={() => setIsTrendingModalOpen(true)}
+              >
               더 보기
             </button>
           </div>
 
         <div className={styles.cardGrid}>
-          {trendingVideos.map((video) =>
+          {trendingVideos.slice(0, 8).map((video) =>
             video.isPlaceholder ? (
               <div
                 key={video.id}
@@ -317,6 +554,62 @@ const PlayListPage = () => {
             )}
           </div>
         )}
+
+          {isTrendingModalOpen && (
+            <div
+              className={styles.modalOverlay}
+              onClick={() => setIsTrendingModalOpen(false)}
+            >
+              <div
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <div>
+                    <h2>요즘 많이 보는 추천 영상</h2>
+                    <p>인기 있는 음악을 한눈에 확인해보세요.</p>
+                  </div>
+
+                  <button
+                    className={styles.modalCloseButton}
+                    onClick={() => setIsTrendingModalOpen(false)}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className={styles.modalGrid}>
+                  {trendingVideos.map((video) =>
+                    video.isPlaceholder ? (
+                      <div
+                        key={video.id}
+                        className={`${styles.smallCard} ${styles.placeholderCard}`}
+                      >
+                        <div className={styles.placeholderThumb}>🎧 준비 중</div>
+                        <span className={styles.placeholderTag}>{video.tag}</span>
+                        <h3>{video.title}</h3>
+                        <p>{video.channelTitle}</p>
+                      </div>
+                    ) : (
+                      <div
+                        key={video.id}
+                        className={styles.smallCard}
+                        onClick={() => openYoutube(video.videoId)}
+                      >
+                        <img
+                          src={video.thumbnailUrl}
+                          className={styles.smallThumbnail}
+                        />
+                        <span className={styles.smallEmotion}>{video.tag}</span>
+                        <h3>{video.title}</h3>
+                        <p>{video.channelTitle}</p>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
       </div>
     </div>

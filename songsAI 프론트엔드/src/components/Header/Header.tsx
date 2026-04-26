@@ -21,8 +21,11 @@ const Header = () => {
                     src={logo}
                     alt="logo"
                     className={styles.logo}
-                    onClick={() => navigate("/")}
-                    />
+                    onClick={() => {
+                        setActiveTab("");
+                        navigate("/")
+                    }}
+                />
 
                 {/* 네비게이션 */}
                 <nav className={styles.nav}>
