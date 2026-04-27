@@ -10,6 +10,7 @@ import DiaryHistoryPage from "./pages/HistoryPage/DiaryHistoryPage";
 import PlayListPage from "./pages/PlayListPage/PlayListPage";
 import CommunityPage from "./pages/CommunityPage/CommunityPage";
 import KakaoSuccessPage from "./pages/Login/KakaoSuccessPage";
+import SavedVideoPage from "./pages/SavedVideoPage/SavedVideoPage";
 
 const App = () => {
     return(
@@ -23,6 +24,7 @@ const App = () => {
                         <Route path="DiaryHistoryPage" element={<DiaryHistoryPage/>}/>
                         <Route path="PlayListPage" element={<PlayListPage/>}/>
                         <Route path="CommunityPage" element={<CommunityPage/>}/>
+                        <Route path="/saved-videos" element={<SavedVideoPage />} />
                     </Route>
 
                     {/* Layout 적용되지 않는 페이지 */}

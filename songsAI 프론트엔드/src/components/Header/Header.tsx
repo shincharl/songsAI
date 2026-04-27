@@ -1,13 +1,11 @@
 import { useState } from "react";
 import styles from "../../styles/Header.module.css"; // Tailwind 클래스 묶은 모듈
 import logo from "../../assets/logo.png"
-import {FiSearch} from "react-icons/fi"
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
 
     const [activeTab, setActiveTab] = useState("추천");
-    const [searchQuery, setSearchQuery] = useState("");
 
     const navigate = useNavigate();
 
@@ -46,16 +44,17 @@ const Header = () => {
                     ))}
 
                     {/* 검색창 */}
-                    <div className={styles.searchWrapper}>
-                        <input 
-                            type="text" 
-                            placeholder="곡, 아티스트 검색"
-                            className={styles.searchInput}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <FiSearch className={styles.searchIcon}/>
-                    </div>
+                    <button
+                        className={`${styles.archiveButton} ${
+                            activeTab === "보관함" ? styles.archiveButtonActive : ""
+                        }`}
+                        onClick={() => {
+                            setActiveTab("보관함");
+                            navigate("/saved-videos");
+                        }}
+                    >
+                        ⭐ 보관함
+                    </button>
                 </nav>
             </div>
         </header>

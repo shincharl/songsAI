@@ -11,6 +11,7 @@ import {
   type TrendingPlaylistItem,
 } from "../../api/playlist";
 import { useAuthStore } from "../../store/useAuthStore";
+import { getSavedVideos, saveVideo, deleteSavedVideo } from "../../api/savedVideo";
 
 const mockFeaturedPlaylist = {
   badge: "😊 오늘의 추천",
@@ -250,6 +251,48 @@ const PlayListPage = () => {
 
   const [isTrendingModalOpen, setIsTrendingModalOpen] = useState(false);
 
+  const [savedVideoIds, setSavedVideoIds] = useState<string[]>([]);
+
+  
+
+  const handleToggleSaveVideo = async (
+    videoId: string,
+    title: string,
+    channelTitle: string,
+    thumbnailUrl: string
+  ) => {
+    if (!videoId) return;
+
+    if (!isLogin) {
+      alert("로그인이 필요한 서비스입니다.");
+      return;
+    }
+
+    const isSaved = savedVideoIds.includes(videoId);
+
+    try {
+      if (isSaved) {
+        await deleteSavedVideo(videoId);
+
+        setSavedVideoIds((prev) =>
+          prev.filter((id) => id !== videoId)
+        );
+      } else {
+        await saveVideo({
+          videoId,
+          title,
+          channelTitle,
+          thumbnailUrl,
+        });
+
+        setSavedVideoIds((prev) => [...prev, videoId]);
+      }
+    } catch (error) {
+      console.error("보관 처리 실패", error);
+      alert("보관 처리 중 문제가 발생했어요.");
+    }
+  };
+
   const handleCategoryClick = async (emotion: string) => {
     if (selectedCategory === emotion) {
       setSelectedCategory(null);
@@ -340,6 +383,17 @@ const PlayListPage = () => {
       }
     }, [isTrendingModalOpen]);
 
+    useEffect(() => {
+      if (!isLogin) return;
+
+      const fetchSaved = async () => {
+        const data = await getSavedVideos();
+        setSavedVideoIds(data.map(v => v.videoId));
+      };
+
+      fetchSaved();
+    }, [isLogin]);
+
   if (loading) {
     return (
       <div className={styles.page}>
@@ -419,8 +473,25 @@ const PlayListPage = () => {
                   >
                     ▶ 바로 재생
                   </button>
-                  <button type="button" className={styles.saveButton}>
-                    ☆ 보관하기
+                  <button
+                    type="button"
+                    className={`${styles.saveButton} ${
+                      savedVideoIds.includes(featuredPlaylist.videoId)
+                      ? styles.saveButtonActive
+                      : ""
+                    }`}
+                    onClick={() =>
+                       handleToggleSaveVideo(
+                        featuredPlaylist.videoId,
+                        featuredPlaylist.title,
+                        featuredPlaylist.channelTitle,
+                        featuredPlaylist.thumbnailUrl
+                      )
+                    }
+                  >
+                    {savedVideoIds.includes(featuredPlaylist.videoId)
+                      ? "★ 보관됨"
+                      : "☆ 보관하기"}
                   </button>
                 </div>
               </div>
@@ -463,26 +534,43 @@ const PlayListPage = () => {
                 <p>{video.channelTitle}</p>
               </div>
             ) : (
-              <div
-                key={video.id}
-                className={styles.smallCard}
-                onClick={() => openYoutube(video.videoId)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    openYoutube(video.videoId);
-                  }
-                }}
-              >
+              <div key={video.id} className={styles.smallCard}>
                 <img
                   src={video.thumbnailUrl}
                   alt={video.title}
                   className={styles.smallThumbnail}
+                  onClick={() => openYoutube(video.videoId)}
                 />
+
                 <span className={styles.smallEmotion}>{video.tag}</span>
-                <h3>{video.title}</h3>
+
+                <h3 onClick={() => openYoutube(video.videoId)}>
+                  {video.title}
+                </h3>
+
                 <p>{video.channelTitle}</p>
+
+                <button
+                  type="button"
+                  className={`${styles.cardSaveButton} ${
+                    savedVideoIds.includes(video.videoId)
+                      ? styles.cardSaveButtonActive
+                      : ""
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleSaveVideo(
+                      video.videoId,
+                      video.title,
+                      video.channelTitle,
+                      video.thumbnailUrl
+                    );
+                  }}
+                >
+                  {savedVideoIds.includes(video.videoId)
+                    ? "★ 보관됨"
+                    : "☆ 보관하기"}
+                </button>
               </div>
             )
           )}
@@ -594,15 +682,41 @@ const PlayListPage = () => {
                       <div
                         key={video.id}
                         className={styles.smallCard}
-                        onClick={() => openYoutube(video.videoId)}
                       >
                         <img
                           src={video.thumbnailUrl}
+                          alt={video.title}
                           className={styles.smallThumbnail}
+                          onClick={() => openYoutube(video.videoId)}
                         />
+
                         <span className={styles.smallEmotion}>{video.tag}</span>
-                        <h3>{video.title}</h3>
+                        
+                        <h3 onClick={() => openYoutube(video.videoId)}>
+                          {video.title}
+                        </h3>
+
                         <p>{video.channelTitle}</p>
+
+                        <button
+                          type="button"
+                          className={`${styles.cardSaveButton} ${
+                            savedVideoIds.includes(video.videoId)
+                            ? styles.cardSaveButtonActive
+                            : ""
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleSaveVideo(
+                              video.videoId,
+                              video.title,
+                              video.channelTitle,
+                              video.thumbnailUrl
+                            );
+                          }}
+                        >
+                          {savedVideoIds.includes(video.videoId) ?  "★ 보관됨" : "☆ 보관하기"}
+                        </button>
                       </div>
                     )
                   )}
