@@ -51,7 +51,7 @@ youtube:
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
   client-secret: ${KAKAO_CLIENT_SECRET}
-  redirect-uri: http://localhost/api/auth/kakao/callback
+  redirect-uri: http://13.124.180.27/api/auth/kakao/callback
 
 app:
-  frontend-url: http://localhost
+  frontend-url: http://13.124.180.27
