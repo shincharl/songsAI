@@ -17,6 +17,11 @@ Thumbs.db
 *.png
 *.jpg
 
+!songsAI-frontend/src/assets/*.png
+!songsAI-frontend/src/assets/*.jpg
+!songsAI-frontend/src/assets/*.jpeg
+!songsAI-frontend/src/assets/*.svg
+
 # node
 node_modules/
 
