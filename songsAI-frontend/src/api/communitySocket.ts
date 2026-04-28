@@ -4,6 +4,8 @@ import type { CommunitySocketEvent } from "./community";
 let client: Client | null = null;
 let subscriptions: StompSubscription[] = [];
 
+const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL ?? "";
+
 const listeners = new Set<(event: CommunitySocketEvent) => void>();
 
 const notifyListeners = (event: CommunitySocketEvent) => {
@@ -22,7 +24,7 @@ export const connectCommunitySocket = (
   }
 
   client = new Client({
-    brokerURL: `${import.meta.env.VITE_WS_BASE_URL}/ws-community`,
+    brokerURL: `${wsBaseUrl}/ws-community`,
     reconnectDelay: 5000,
   });
 

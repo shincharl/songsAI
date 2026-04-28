@@ -40,3 +40,4 @@ out/
 src/main/resources/application-*.yml
 # 단, 기본 application.yml은 커밋 가능하므로 제외
 !src/main/resources/application.yml
+!src/main/resources/application-prod.yml
