@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-transformers
-torch
-sentencepiece
-accelerate
-langchain-ollama

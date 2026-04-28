@@ -1,0 +1,29 @@
+# 환경 변수 (절대 금지)
+.env
+.env.*
+
+# docker
+docker-compose.override.yml
+
+# 로그
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 개인 파일
+*.docx
+*.png
+*.jpg
+
+# node
+node_modules/
+
+# python
+__pycache__/
+*.pyc
+
+# java
+build/
+.gradle/

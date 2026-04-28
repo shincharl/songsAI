@@ -1,0 +1,78 @@
+services:
+  frontend:
+    build:
+      context: ./songsAI-frontend
+      dockerfile: Dockerfile.prod
+    container_name: songsai-frontend
+    restart: always
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./BeatAI-backend
+      dockerfile: Dockerfile
+    container_name: songsai-backend
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      AI_SERVER_URL: http://ai:8000
+
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      SPRING_REDIS_HOST: ${SPRING_REDIS_HOST}
+      SPRING_REDIS_PORT: ${SPRING_REDIS_PORT}
+
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
+    depends_on:
+      - mysql
+      - ai
+      - redis
+
+  mysql:
+    image: mysql:8.0
+    container_name: songsai-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: beatai
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  ai:
+    build:
+      context: ./BeatAI-ai-server
+      dockerfile: Dockerfile
+    container_name: songsai-ai
+    restart: always
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+
+  redis:
+    image: redis:7
+    container_name: songsai-redis
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    container_name: songsai-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - ai
+
+volumes:
+  mysql_data:
