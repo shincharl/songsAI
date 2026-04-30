@@ -18,6 +18,12 @@ public interface DiaryRepository extends JpaRepository<Diary, Long>, DiaryReposi
   // 특정 날짜의 일기 1개 찾기
   List<Diary> findAllByUserAndCreatedAtBetween(User user, LocalDateTime start, LocalDateTime end);
 
+  List<Diary> findAllByUserAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(
+    User user,
+    LocalDateTime start,
+    LocalDateTime end
+  );
+
   // 주간 감정 그래프 조회 및 정렬
   List<Diary> findAllByUserAndCreatedAtBetweenOrderByCreatedAtAsc(
     User user,

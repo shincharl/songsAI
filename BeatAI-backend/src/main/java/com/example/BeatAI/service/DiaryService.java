@@ -172,11 +172,9 @@ public class DiaryService {
     LocalDate firstDay = LocalDate.of(year, month, 1);
 
     LocalDateTime start = firstDay.atStartOfDay();
-    LocalDateTime end = firstDay
-      .withDayOfMonth(firstDay.lengthOfMonth())
-      .atTime(23, 59,59);
+    LocalDateTime end = firstDay.plusMonths(1).atStartOfDay();
 
-    List<Diary> diaries = diaryRepository.findAllByUserAndCreatedAtBetween(user, start, end);
+    List<Diary> diaries = diaryRepository.findAllByUserAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(user, start, end);
 
     return diaries.stream()
       .map(diary -> {
