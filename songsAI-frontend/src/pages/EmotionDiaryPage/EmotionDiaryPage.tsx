@@ -307,6 +307,9 @@ const EmotionDiaryPage = () => {
       const month = date.getMonth() + 1;
 
       const res = await getMonthlyCalendar(year, month);
+
+      console.log("calendar raw:" , res.data);
+
       setCalendarData(res.data);
     } catch (error) {
       console.error("월별 캘린더 조회 실패:", error);
