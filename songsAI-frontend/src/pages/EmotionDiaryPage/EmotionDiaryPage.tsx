@@ -127,7 +127,10 @@ const EmotionDiaryPage = () => {
   const [diaryStickers, setDiaryStickers] = useState<string[]>([]);
   const [previewLoading, setPreviewLoading] = useState(true);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  });
 
   const [calendarData, setCalendarData] = useState<DiaryCalendarItem[]>([]);
   const [calendarLoading, setCalendarLoading] = useState(true);
@@ -303,8 +306,14 @@ const EmotionDiaryPage = () => {
     try {
       setCalendarLoading(true);
 
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
+      const getLocalDate = (date: Date) => {
+        return new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      };
+
+      const localDate = getLocalDate(date);
+
+      const year = localDate.getFullYear();
+      const month = localDate.getMonth() + 1;
 
       const res = await getMonthlyCalendar(year, month);
 
@@ -342,6 +351,13 @@ const EmotionDiaryPage = () => {
       console.error("주간 인사이트 조회 실패:", error);
       setWeeklyInsight("최근 감정 흐름을 차분히 살펴봤어요.");
     }
+  };
+
+  const toLocalDateString = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
   };
 
   return (
@@ -440,7 +456,7 @@ const EmotionDiaryPage = () => {
             <p>달력 불러오는 중...</p>
            ) : (
             <EmotionCalendar
-              selectedDate={selectedDate}
+              selectedDate={new Date(toLocalDateString(selectedDate))}
               onDateChange={setSelectedDate}
               calendarData={calendarData}
             />
