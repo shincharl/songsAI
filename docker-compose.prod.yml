@@ -14,6 +14,8 @@ services:
       dockerfile: Dockerfile
     container_name: songsai-backend
     restart: always
+    volumes:
+      - ./uploads:/app/uploads
     environment:
       TZ: Asia/Seoul
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Asia/Seoul"
