@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { getMyProfile } from "../../api/user";
 
 const Login: FC = () => {
-  const { isLogin, nickname, setNickname, setProfileImage } = useAuthStore();
+  const { isLogin, nickname, setNickname, setProfileImageUrl } = useAuthStore();
 
   useEffect(() => {
     if (!isLogin) return;
@@ -17,14 +17,14 @@ const Login: FC = () => {
         const data = await getMyProfile();
 
         setNickname(data.nickname);
-        setProfileImage(data.profileImageUrl);
+        setProfileImageUrl(data.profileImageUrl);
       } catch (e) {
         console.error(e);
       }
     };
 
     fetchProfile();
-  }, [isLogin, setNickname, setProfileImage]);
+  }, [isLogin, setNickname, setProfileImageUrl]);
 
   return (
     <div className={styles.wrapper}>

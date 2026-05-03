@@ -6,7 +6,14 @@ interface AuthState {
   nickname: string | null; // 닉네임 필드
   profileImageUrl: string | null; // 프로필 이미지 URL 필드
   isLogin: boolean;
-  login: (token: string, username: string, nickname?: string) => void;
+
+  login: (
+    token: string,
+    username: string,
+    nickname?: string,
+    profileImageUrl?: string | null,
+  ) => void;
+
   logout: () => void;
   setNickname: (nickname: string) => void; // 닉네임 업데이트 함수
   setProfileImageUrl: (url: string | null) => void; // 프로필 이미지 URL 업데이트 함수
@@ -59,7 +66,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ nickname });
   },
 
-  setProfileImage: (url) => {
+  setProfileImageUrl: (url) => {
     if (url) {
       sessionStorage.setItem("profileImageUrl", url);
     } else {

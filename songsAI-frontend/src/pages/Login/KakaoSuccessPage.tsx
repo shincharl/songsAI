@@ -9,7 +9,7 @@ const KakaoSuccessPage = () => {
 
   const login = useAuthStore((state) => state.login);
   const setNickname = useAuthStore((state) => state.setNickname);
-  const setProfileImage = useAuthStore((state) => state.setProfileImage);
+  const setProfileImageUrl = useAuthStore((state) => state.setProfileImageUrl);
 
   useEffect(() => {
     const accessToken = params.get("accessToken");
@@ -27,7 +27,7 @@ const KakaoSuccessPage = () => {
         const profile = await getMyProfile();
 
         setNickname(profile.nickname);
-        setProfileImage(profile.profileImageUrl);
+        setProfileImageUrl(profile.profileImageUrl);
       } catch (e) {
         console.error(e);
       }
@@ -36,7 +36,7 @@ const KakaoSuccessPage = () => {
     };
 
     handleKakaoLogin();
-  }, [params, login, setNickname, setProfileImage, navigate]);
+  }, [params, login, setNickname, setProfileImageUrl, navigate]);
 
   return <div>로그인 처리 중...</div>;
 };

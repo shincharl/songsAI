@@ -14,17 +14,17 @@ import { useNavigate } from "react-router-dom";
 const MyProfile = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
   const [nickname, setNickname] = useState("사용자");
   const [email, setEmail] = useState("");
 
   const navigate = useNavigate();
 
   const setAuthNickname = useAuthStore((state) => state.setNickname);
-  const setProfileImageStore = useAuthStore((state) => state.setProfileImage);
+  const setProfileImageStore = useAuthStore((state) => state.setProfileImageUrl);
 
-  const getImageUrl = (url: string | null) => {
-    if (!url) return null;
+  const getImageUrl = (url: string | null): string | undefined => {
+    if (!url) return undefined;
     if (url.startsWith("http")) return url;
     return `${import.meta.env.VITE_FILE_BASE_URL || ""}${url}`;
   };
@@ -91,7 +91,7 @@ const MyProfile = () => {
     try {
       await deleteProfileImage();
 
-      setProfileImage(null);
+      setProfileImage(undefined);
       setProfileImageStore(null);
 
       alert("프로필 이미지가 삭제되었습니다.");

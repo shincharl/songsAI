@@ -77,7 +77,7 @@ const Header = () => {
             >
                 {profileImageUrl ? (
                 <img
-                    src={getImageUrl(profileImageUrl)}
+                    src={getImageUrl(profileImageUrl) ?? undefined}
                     alt="프로필"
                     className={styles.avatar}
                 />
