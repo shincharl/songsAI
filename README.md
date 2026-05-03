@@ -21,6 +21,8 @@ BeatAI는 단순한 음악 추천 서비스가 아니라,
 
 - BeatAI 바로가기: [https://www.beatai.kro.kr/](https://www.beatai.kro.kr/)
 
+---
+
 ## 🚀 주요 기능
 
 - ✍️ **감정 일기 작성 및 분석**
