@@ -13,7 +13,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/ws-community")
-      .setAllowedOriginPatterns("http://localhost:5173");
+      .setAllowedOriginPatterns(
+          "http://localhost:5173",
+          "https://www.beatai.kro.kr",
+          "https://beatai.kro.kr"
+        );
       // 나중에 배포 도메인도 추가
       // .withSockJS(); // 필요하면 나중에 추가
   }
