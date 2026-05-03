@@ -22,6 +22,13 @@ Thumbs.db
 !songsAI-frontend/src/assets/*.jpeg
 !songsAI-frontend/src/assets/*.svg
 
+# README docs 이미지 허용
+!docs/
+!docs/*.png
+!docs/*.jpg
+!docs/*.jpeg
+!docs/*.JPG
+
 # node
 node_modules/
 
