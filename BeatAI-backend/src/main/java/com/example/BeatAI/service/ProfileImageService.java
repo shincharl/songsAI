@@ -1,19 +1,28 @@
 package com.example.BeatAI.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProfileImageService {
 
-  @Value("${file.upload-dir}")
-  private String uploadDir;
+  private final S3Client s3Client;
+
+  @Value("${aws.s3.bucket}")
+  private String bucket;
+
+  @Value("${aws.s3.region}")
+  private String region;
 
   public String save(MultipartFile file){
     validate(file);
@@ -22,17 +31,20 @@ public class ProfileImageService {
       String extension = getExtension(file);
       String savedFilename = UUID.randomUUID() + extension;
 
-      Path uploadPath = Path.of(uploadDir);
+      String key = "profile/" + savedFilename;
 
-      if(!Files.exists(uploadPath)) {
-        Files.createDirectories(uploadPath);
-      }
+      PutObjectRequest request = PutObjectRequest.builder()
+        .bucket(bucket)
+        .key(key)
+        .contentType(file.getContentType())
+        .build();
 
-      Path savePath = uploadPath.resolve(savedFilename);
+      s3Client.putObject(
+        request,
+        RequestBody.fromBytes(file.getBytes())
+      );
 
-      file.transferTo(savePath.toFile());
-
-      return "/uploads/profile/" + savedFilename;
+      return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + key;
 
     }catch (IOException e) {
       throw new RuntimeException("프로필 이미지 저장에 실패했습니다.", e);
@@ -67,5 +79,23 @@ public class ProfileImageService {
       case "image/png" -> ".png";
       default -> throw new IllegalArgumentException("지원하지 않는 이미지 형식입니다.");
     };
+  }
+
+  public void delete(String imageUrl){
+    if(imageUrl == null || imageUrl.isBlank()) return;
+
+    String marker = ".amazonaws.com/";
+    int index = imageUrl.indexOf(marker);
+
+    if(index == -1) return;
+
+    String key = imageUrl.substring(index + marker.length());
+
+    DeleteObjectRequest request = DeleteObjectRequest.builder()
+      .bucket(bucket)
+      .key(key)
+      .build();
+
+    s3Client.deleteObject(request);
   }
 }

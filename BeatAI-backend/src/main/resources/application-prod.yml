@@ -42,6 +42,11 @@ server:
 file:
   upload-dir: /app/uploads/profile
 
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET}
+    region: ${AWS_REGION}
+
 cors:
   allowed-origins:
     - http://localhost

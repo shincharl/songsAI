@@ -44,6 +44,11 @@ public class UserprofileService {
   @Transactional
   public MyProfileResponse uploadProfileImage(Long userId, MultipartFile file){
     User user = getUser(userId);
+    
+    // 기존 이미지 삭제
+    if (user.getProfileImageUrl() != null) {
+      profileImageService.delete(user.getProfileImageUrl());
+    }
 
     String imageUrl = profileImageService.save(file);
 
@@ -57,6 +62,10 @@ public class UserprofileService {
   public MyProfileResponse deleteProfileImage(Long userId){
     User user = getUser(userId);
 
+    if (user.getProfileImageUrl() != null){
+      profileImageService.delete(user.getProfileImageUrl());
+    }
+
     user.updateProfileImageUrl(null);
 
     return toResponse(user);
@@ -66,6 +75,11 @@ public class UserprofileService {
   @Transactional
   public void deleteMyAccount(Long userId){
     User user = getUser(userId);
+
+    if (user.getProfileImageUrl() != null){
+      profileImageService.delete(user.getProfileImageUrl());
+    }
+
     userRepository.delete(user);
   }
 
