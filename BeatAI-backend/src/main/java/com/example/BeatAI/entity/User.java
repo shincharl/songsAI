@@ -35,6 +35,8 @@ public class User {
   @Column(nullable = true)
   private String nickname;
 
+  private String profileImageUrl;
+
   @Column(length = 20)
   private String carrier;
 
@@ -100,5 +102,16 @@ public class User {
   public String getFirstNickname() {
     return this.nickname;
   }
+
+  // 닉네임 변경 메서드
+  public void updateNickname(String nickname){
+    this.nickname = nickname;
+  }
+
+  // 프로필 사진 업로드 메서드
+  public void updateProfileImageUrl(String profileImageUrl){
+    this.profileImageUrl = profileImageUrl;
+  }
+
 
 }

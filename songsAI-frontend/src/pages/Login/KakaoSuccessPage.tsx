@@ -1,28 +1,44 @@
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
+import { getMyProfile } from "../../api/user";
 
 const KakaoSuccessPage = () => {
-    const [params] = useSearchParams();
-    const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
 
-    const login = useAuthStore((state) => state.login);
+  const login = useAuthStore((state) => state.login);
+  const setNickname = useAuthStore((state) => state.setNickname);
+  const setProfileImage = useAuthStore((state) => state.setProfileImage);
 
-    useEffect(() => {
-        const accessToken = params.get("accessToken");
-        const nickname = params.get("nickname");
+  useEffect(() => {
+    const accessToken = params.get("accessToken");
+    const nickname = params.get("nickname");
 
-        if (accessToken){
-          login(accessToken, "kakao_user", nickname ?? undefined);
-          navigate("/");
-          return;
-        }
-
-        // 로그인 상태 반영
+    const handleKakaoLogin = async () => {
+      if (!accessToken) {
         navigate("/Signup");
-    }, [params, login, navigate]);
+        return;
+      }
 
-    return <div>로그인 처리 중...</div>
+      login(accessToken, "kakao_user", nickname ?? undefined);
+
+      try {
+        const profile = await getMyProfile();
+
+        setNickname(profile.nickname);
+        setProfileImage(profile.profileImageUrl);
+      } catch (e) {
+        console.error(e);
+      }
+
+      navigate("/");
+    };
+
+    handleKakaoLogin();
+  }, [params, login, setNickname, setProfileImage, navigate]);
+
+  return <div>로그인 처리 중...</div>;
 };
 
 export default KakaoSuccessPage;

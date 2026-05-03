@@ -3,6 +3,11 @@ spring:
     compose:
       enabled: false
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
   datasource:
     url: jdbc:mysql://dev-beatai-rds.cd82yqsw6pul.ap-northeast-2.rds.amazonaws.com:3306/beatai?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -33,6 +38,9 @@ spring:
 
 server:
   port: 8080
+
+file:
+  upload-dir: ./uploads/profile
 
 cors:
   allowed-origins:

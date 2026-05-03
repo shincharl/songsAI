@@ -29,7 +29,11 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // AccessToken 만료 (401) && 아직 재시도 안 한 요청
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/users/reissue")
+    ) {
       originalRequest._retry = true;
 
       try {
